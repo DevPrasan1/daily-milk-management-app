@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return isAuth() && request.auth.uid == uid;
+    }
+
+    // Users: any authenticated user can read profiles (needed for nearby sellers + phone match)
+    // Only the owner can write their own profile
+    match /users/{userId} {
+      allow read: if isAuth();
+      allow write: if isUser(userId);
+    }
+
+    // Sellers: anyone auth can read (for nearby discovery), only seller can write
+    match /sellers/{sellerId} {
+      allow read: if isAuth();
+      allow write: if isUser(sellerId);
+    }
+
+    // SellerBuyers members: seller reads/writes; buyer can read their own member doc
+    match /sellerBuyers/{sellerId}/members/{buyerId} {
+      allow read: if isUser(sellerId) || isUser(buyerId);
+      allow write: if isUser(sellerId);
+    }
+
+    // SellerPrices: seller writes, any auth user reads (for bill display)
+    match /sellerPrices/{sellerId}/prices/{priceId} {
+      allow read: if isAuth();
+      allow write: if isUser(sellerId);
+    }
+
+    // Records: seller writes; buyer reads their own records
+    match /records/{sellerId}/entries/{recordId} {
+      allow write: if isUser(sellerId);
+      allow read: if isUser(sellerId) ||
+        (isAuth() && resource.data.buyerId == request.auth.uid);
+    }
+
+    // BuyerSelfRecords: buyer only
+    match /buyerSelfRecords/{buyerId}/entries/{recordId} {
+      allow read, write: if isUser(buyerId);
+    }
+
+    // Payments: seller writes; buyer reads their own payment records
+    match /payments/{sellerId}/transactions/{paymentId} {
+      allow write: if isUser(sellerId);
+      allow read: if isUser(sellerId) ||
+        (isAuth() && resource.data.buyerId == request.auth.uid);
+    }
+
+    // Buyers profile: buyer reads/writes own doc
+    match /buyers/{buyerId} {
+      allow read, write: if isUser(buyerId);
+    }
+
+    // Link requests: any auth user can create; only involved parties can read/update
+    match /linkRequests/{requestId} {
+      allow create: if isAuth();
+      allow read, update: if isAuth() && (
+        resource.data.sellerId == request.auth.uid ||
+        resource.data.buyerId == request.auth.uid
+      );
+    }
+  }
+}
