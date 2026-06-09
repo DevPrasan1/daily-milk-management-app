@@ -1,0 +1,167 @@
+{
+  "common": {
+    "save": "सेव करें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "बदलें",
+    "add": "जोड़ें",
+    "back": "वापस",
+    "next": "आगे",
+    "done": "हो गया",
+    "loading": "लोड हो रहा है...",
+    "morning": "सुबह",
+    "evening": "शाम",
+    "total": "कुल",
+    "amount": "राशि",
+    "paid": "भुगतान किया",
+    "remaining": "बाकी",
+    "cow": "गाय",
+    "buffalo": "भैंस",
+    "litres": "लीटर",
+    "perLitre": "प्रति लीटर",
+    "days": "दिन",
+    "date": "तारीख",
+    "phone": "मोबाइल नंबर",
+    "name": "नाम",
+    "price": "भाव",
+    "note": "नोट",
+    "confirm": "पक्का करें",
+    "yes": "हाँ",
+    "no": "नहीं",
+    "error": "कुछ गलत हुआ। दोबारा कोशिश करें।",
+    "retry": "दोबारा करें",
+    "noData": "अभी कोई डेटा नहीं",
+    "search": "खोजें"
+  },
+  "landing": {
+    "tagline": "अपना दूध, अपना हिसाब",
+    "subtitle": "दूध की डिलीवरी और भुगतान का हिसाब — आसान और तेज़",
+    "feature1Title": "रोज़ का हिसाब",
+    "feature1Desc": "हर खरीदार का सुबह-शाम का दूध ट्रैक करें",
+    "feature2Title": "बिल अपने आप",
+    "feature2Desc": "महीने का बिल अपने आप बनता है",
+    "feature3Title": "हिंदी सपोर्ट",
+    "feature3Desc": "हिंदी या अंग्रेजी में इस्तेमाल करें",
+    "feature4Title": "खरीदार देख सकते हैं",
+    "feature4Desc": "खरीदार अपना हिसाब कभी भी देख सकते हैं",
+    "loginBtn": "शुरू करें",
+    "alreadyAccount": "पहले से अकाउंट है? लॉगिन करें"
+  },
+  "login": {
+    "title": "मोबाइल से लॉगिन करें",
+    "phonePlaceholder": "10 अंकों का मोबाइल नंबर",
+    "sendOtp": "OTP भेजें",
+    "otpSent": "OTP भेजा गया +91",
+    "otpPlaceholder": "6 अंकों का OTP डालें",
+    "verifyOtp": "OTP जाँचें और लॉगिन करें",
+    "resend": "OTP दोबारा भेजें",
+    "resendIn": "दोबारा भेजें",
+    "seconds": "सेकंड में",
+    "changeNumber": "नंबर बदलें"
+  },
+  "roleSelect": {
+    "title": "आप कौन हैं?",
+    "subtitle": "शुरू करने के लिए अपनी भूमिका चुनें",
+    "sellerTitle": "दूध बेचने वाले",
+    "sellerDesc": "मैं दूध बेचता हूँ और खरीदारों का हिसाब रखना चाहता हूँ",
+    "buyerTitle": "दूध खरीदने वाले",
+    "buyerDesc": "मैं दूध खरीदता हूँ और अपना हिसाब देखना चाहता हूँ",
+    "selectBtn": "जारी रखें"
+  },
+  "onboarding": {
+    "title": "प्रोफ़ाइल बनाएं",
+    "namePlaceholder": "आपका पूरा नाम",
+    "aboutPlaceholder": "अपनी डेयरी के बारे में बताएं (वैकल्पिक)",
+    "homeDelivery": "मैं घर पर डिलीवरी देता हूँ",
+    "continueBtn": "आगे बढ़ें",
+    "sellerExtra": "डेयरी की जानकारी",
+    "cattleSection": "पशु और भाव",
+    "addCattle": "पशु जोड़ें",
+    "cattleType": "पशु का प्रकार",
+    "pricePerLitre": "भाव (₹/लीटर)",
+    "totalMilk": "कुल दूध (लीटर/दिन)",
+    "selectCattle": "पशु चुनें",
+    "removeCattle": "हटाएं",
+    "cow": "गाय",
+    "buffalo": "भैंस",
+    "goat": "बकरी",
+    "camel": "ऊंट"
+  },
+  "seller": {
+    "dashboard": {
+      "title": "मेरी डेयरी",
+      "greeting": "नमस्ते",
+      "todayEntry": "आज की एंट्री",
+      "pendingPayments": "बकाया भुगतान",
+      "totalBuyers": "कुल खरीदार",
+      "todayDelivery": "आज का दूध",
+      "viewAll": "सभी खरीदार देखें"
+    },
+    "buyers": {
+      "title": "मेरे खरीदार",
+      "addBuyer": "खरीदार जोड़ें",
+      "emptyTitle": "अभी कोई खरीदार नहीं",
+      "emptyDesc": "दूध ट्रैक करना शुरू करने के लिए पहला खरीदार जोड़ें",
+      "active": "सक्रिय",
+      "inactive": "निष्क्रिय",
+      "startDate": "शुरू की तारीख",
+      "deleteConfirm": "इस खरीदार को हमेशा के लिए हटाएं?",
+      "hasRecordsError": "हटा नहीं सकते — खरीदार के रिकॉर्ड मौजूद हैं"
+    },
+    "entry": {
+      "title": "रोज़ की एंट्री",
+      "selectBuyer": "खरीदार चुनें",
+      "morningEntry": "सुबह की एंट्री",
+      "eveningEntry": "शाम की एंट्री",
+      "quantityPlaceholder": "0.0",
+      "saveEntry": "एंट्री सेव करें",
+      "autoMode": "ऑटो मोड चालू है",
+      "manualOverride": "आज का मान बदलें"
+    },
+    "billing": {
+      "title": "महीने का बिल",
+      "addPayment": "भुगतान दर्ज करें",
+      "paymentAmount": "भुगतान राशि",
+      "paymentDate": "भुगतान की तारीख",
+      "paymentNote": "नोट (वैकल्पिक)",
+      "generateBill": "बिल बनाएं",
+      "totalAmount": "कुल राशि",
+      "amountPaid": "भुगतान की गई राशि",
+      "balanceDue": "बकाया राशि",
+      "paymentHistory": "भुगतान इतिहास"
+    },
+    "settings": {
+      "title": "सेटिंग्स",
+      "profile": "मेरी प्रोफ़ाइल",
+      "pricing": "दूध का भाव",
+      "cattleType": "मैं क्या बेचता हूँ?",
+      "autoMode": "ऑटो मोड",
+      "autoModeDesc": "सुबह 8 बजे और शाम 8 बजे अपने आप एंट्री बनाएं",
+      "language": "भाषा",
+      "theme": "डार्क मोड",
+      "logout": "लॉगआउट"
+    }
+  },
+  "buyer": {
+    "dashboard": {
+      "title": "मेरा दूध",
+      "mySellers": "मेरे दूधवाले",
+      "thisMonth": "इस महीने",
+      "totalLitres": "कुल लीटर",
+      "amountDue": "बकाया राशि"
+    },
+    "records": {
+      "title": "मेरा हिसाब",
+      "selectSeller": "दूधवाला चुनें",
+      "noRecords": "इस महीने कोई रिकॉर्ड नहीं",
+      "selfEntry": "मेरी एंट्री"
+    },
+    "nearby": {
+      "title": "पास के दूधवाले",
+      "findingSellers": "पास के दूधवाले ढूंढ रहे हैं...",
+      "noSellers": "पास में कोई दूधवाला नहीं मिला",
+      "distance": "दूरी",
+      "requestLink": "जुड़ने का अनुरोध"
+    }
+  }
+}

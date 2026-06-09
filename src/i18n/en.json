@@ -1,0 +1,167 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "loading": "Loading...",
+    "morning": "Morning",
+    "evening": "Evening",
+    "total": "Total",
+    "amount": "Amount",
+    "paid": "Paid",
+    "remaining": "Remaining",
+    "cow": "Cow",
+    "buffalo": "Buffalo",
+    "litres": "Litres",
+    "perLitre": "per litre",
+    "days": "Days",
+    "date": "Date",
+    "phone": "Phone Number",
+    "name": "Name",
+    "price": "Price",
+    "note": "Note",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "noData": "No data yet",
+    "search": "Search"
+  },
+  "landing": {
+    "tagline": "Apna dudh, apna hisaab",
+    "subtitle": "Manage milk delivery and payments — simple and fast",
+    "feature1Title": "Daily Records",
+    "feature1Desc": "Track morning and evening milk for every buyer",
+    "feature2Title": "Auto Billing",
+    "feature2Desc": "Monthly bills generated automatically",
+    "feature3Title": "Hindi Support",
+    "feature3Desc": "Use the app in Hindi or English",
+    "feature4Title": "Buyer View",
+    "feature4Desc": "Buyers can see their own records anytime",
+    "loginBtn": "Get Started",
+    "alreadyAccount": "Already have an account? Login"
+  },
+  "login": {
+    "title": "Login with Phone",
+    "phonePlaceholder": "Enter 10-digit mobile number",
+    "sendOtp": "Send OTP",
+    "otpSent": "OTP sent to +91",
+    "otpPlaceholder": "Enter 6-digit OTP",
+    "verifyOtp": "Verify & Login",
+    "resend": "Resend OTP",
+    "resendIn": "Resend in",
+    "seconds": "seconds",
+    "changeNumber": "Change Number"
+  },
+  "roleSelect": {
+    "title": "Who are you?",
+    "subtitle": "Choose your role to get started",
+    "sellerTitle": "Milk Seller",
+    "sellerDesc": "I sell milk and want to track buyers and payments",
+    "buyerTitle": "Milk Buyer",
+    "buyerDesc": "I buy milk and want to see my records and bills",
+    "selectBtn": "Continue as"
+  },
+  "onboarding": {
+    "title": "Setup Your Profile",
+    "namePlaceholder": "Your full name",
+    "aboutPlaceholder": "Tell buyers about your dairy (optional)",
+    "homeDelivery": "I offer home delivery",
+    "continueBtn": "Continue",
+    "sellerExtra": "Dairy Information",
+    "cattleSection": "Cattle & Prices",
+    "addCattle": "Add Cattle Type",
+    "cattleType": "Cattle Type",
+    "pricePerLitre": "Price (₹/L)",
+    "totalMilk": "Total Milk (L/day)",
+    "selectCattle": "Select cattle type",
+    "removeCattle": "Remove",
+    "cow": "Cow",
+    "buffalo": "Buffalo",
+    "goat": "Goat",
+    "camel": "Camel"
+  },
+  "seller": {
+    "dashboard": {
+      "title": "My Dairy",
+      "greeting": "Good morning",
+      "todayEntry": "Today's Entry",
+      "pendingPayments": "Pending Payments",
+      "totalBuyers": "Total Buyers",
+      "todayDelivery": "Today's Delivery",
+      "viewAll": "View All Buyers"
+    },
+    "buyers": {
+      "title": "My Buyers",
+      "addBuyer": "Add Buyer",
+      "emptyTitle": "No buyers yet",
+      "emptyDesc": "Add your first buyer to start tracking milk delivery",
+      "active": "Active",
+      "inactive": "Inactive",
+      "startDate": "Start Date",
+      "deleteConfirm": "Delete this buyer permanently?",
+      "hasRecordsError": "Cannot delete — buyer has existing records"
+    },
+    "entry": {
+      "title": "Daily Entry",
+      "selectBuyer": "Select Buyer",
+      "morningEntry": "Morning Entry",
+      "eveningEntry": "Evening Entry",
+      "quantityPlaceholder": "0.0",
+      "saveEntry": "Save Entry",
+      "autoMode": "Auto mode on",
+      "manualOverride": "Override today's values"
+    },
+    "billing": {
+      "title": "Monthly Bill",
+      "addPayment": "Record Payment",
+      "paymentAmount": "Payment Amount",
+      "paymentDate": "Payment Date",
+      "paymentNote": "Note (optional)",
+      "generateBill": "Generate Bill",
+      "totalAmount": "Total Amount",
+      "amountPaid": "Amount Paid",
+      "balanceDue": "Balance Due",
+      "paymentHistory": "Payment History"
+    },
+    "settings": {
+      "title": "Settings",
+      "profile": "My Profile",
+      "pricing": "Milk Pricing",
+      "cattleType": "What do I sell?",
+      "autoMode": "Auto Mode",
+      "autoModeDesc": "Automatically create daily records at 8am and 8pm",
+      "language": "Language",
+      "theme": "Dark Mode",
+      "logout": "Logout"
+    }
+  },
+  "buyer": {
+    "dashboard": {
+      "title": "My Milk",
+      "mySellers": "My Sellers",
+      "thisMonth": "This Month",
+      "totalLitres": "Total Litres",
+      "amountDue": "Amount Due"
+    },
+    "records": {
+      "title": "My Records",
+      "selectSeller": "Select Seller",
+      "noRecords": "No records for this month",
+      "selfEntry": "My Entry"
+    },
+    "nearby": {
+      "title": "Nearby Sellers",
+      "findingSellers": "Finding sellers near you...",
+      "noSellers": "No sellers found nearby",
+      "distance": "away",
+      "requestLink": "Request to Link"
+    }
+  }
+}
