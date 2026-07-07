@@ -1,16 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/config/firebase'
 import { useAuth } from '@/context/AuthContext'
 import { useLinkedSellers } from '@/hooks/useBuyer'
 import { useMonthRecords } from '@/hooks/useRecords'
 import { saveBuyerSelfRecord } from '@/services/record.service'
+import { getBuyerMembership } from '@/services/buyer.service'
 import { useApp } from '@/context/AppContext'
 import { getLastNMonths } from '@/utils/dateUtils'
 import { validateQuantity } from '@/utils/validators'
 import AppShell from '@/components/layout/AppShell'
 import TopBar from '@/components/layout/TopBar'
 import PageWrapper from '@/components/layout/PageWrapper'
-import CattleSelector from '@/components/seller/CattleSelector'
 import RecordCard from '@/components/records/RecordCard'
 import MonthSummaryCard from '@/components/records/MonthSummaryCard'
 import SellerCard from '@/components/buyer/SellerCard'
@@ -20,6 +22,7 @@ import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import { BookOpen, PenLine } from 'lucide-react'
 import { clsx } from 'clsx'
+import { groupRecordsByDate } from '@/utils/milkUtils'
 
 const months = getLastNMonths(6)
 
@@ -35,24 +38,95 @@ export default function MyRecords() {
   const [tab, setTab] = useState('records') // 'records' | 'self-entry'
 
   // Self-entry state
+  const [entryDate, setEntryDate] = useState(new Date().toISOString().split('T')[0])
   const [morning, setMorning] = useState('')
   const [evening, setEvening] = useState('')
   const [selfErrors, setSelfErrors] = useState({})
   const [selfLoading, setSelfLoading] = useState(false)
+  const [buyerMember, setBuyerMember] = useState(null)
+
+  // Fetch buyer's default milk values from seller's membership
+  useEffect(() => {
+    if (!selectedSeller || !user) {
+      setBuyerMember(null)
+      return
+    }
+    getBuyerMembership(selectedSeller.id, user.uid, user.phoneNumber)
+      .then(setBuyerMember)
+      .catch(err => {
+        console.error('Error fetching buyer membership:', err)
+        setBuyerMember(null)
+      })
+  }, [selectedSeller, user])
+
+  // Pre-fill morning/evening with default values from membership on buyerMember/cattle change
+  useEffect(() => {
+    if (buyerMember) {
+      const defaultMorning = buyerMember.morning?.[cattle] ?? ''
+      const defaultEvening = buyerMember.evening?.[cattle] ?? ''
+      setMorning(defaultMorning ? String(defaultMorning) : '')
+      setEvening(defaultEvening ? String(defaultEvening) : '')
+    } else {
+      setMorning('')
+      setEvening('')
+    }
+  }, [buyerMember, cattle])
+
+  // Set default entryDate based on selectedMonth
+  useEffect(() => {
+    const today = new Date()
+    const isCurrMonth = selectedMonth.key === months[0].key
+    if (isCurrMonth) {
+      setEntryDate(today.toISOString().split('T')[0])
+    } else {
+      const year = selectedMonth.date.getFullYear()
+      const month = selectedMonth.date.getMonth()
+      setEntryDate(`${year}-${String(month + 1).padStart(2, '0')}-01`)
+    }
+  }, [selectedMonth])
+
+  const dateLimits = (() => {
+    const year = selectedMonth.date.getFullYear()
+    const month = selectedMonth.date.getMonth()
+    const min = `${year}-${String(month + 1).padStart(2, '0')}-01`
+
+    // Max is last day of the selected month, or today if selected month is the current month
+    const today = new Date()
+    const isCurrMonth = selectedMonth.key === months[0].key
+    let max = ''
+    if (isCurrMonth) {
+      max = today.toISOString().split('T')[0]
+    } else {
+      const lastDay = new Date(year, month + 1, 0).getDate()
+      max = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+    }
+    return { min, max }
+  })()
 
   const isCurrentMonth = selectedMonth.key === months[0].key
 
   const { records, loading: recordsLoading, summary, reload } = useMonthRecords(
     selectedSeller?.id,
-    user.uid,
+    buyerMember?.id,
     selectedMonth.date.getFullYear(),
-    selectedMonth.date.getMonth()
+    selectedMonth.date.getMonth(),
+    0,
+    true,
+    user.uid
   )
 
-  const cattleRecords = records.filter(r => r.cattleType === cattle)
+  const cattleRecords = records
 
   async function handleSelfEntry() {
     const errs = {}
+    if (!entryDate) {
+      errs.date = 'Select a date'
+    } else {
+      const todayStr = new Date().toISOString().split('T')[0]
+      if (entryDate > todayStr) {
+        errs.date = 'Date cannot be in the future'
+      }
+    }
     if (morning) { const e = validateQuantity(morning); if (e) errs.morning = e }
     if (evening) { const e = validateQuantity(evening); if (e) errs.evening = e }
     if (!morning && !evening) errs.morning = 'Enter at least one value'
@@ -60,17 +134,39 @@ export default function MyRecords() {
 
     setSelfLoading(true)
     try {
+      const [yr, mo, dy] = entryDate.split('-').map(Number)
+      const dateObj = new Date(yr, mo - 1, dy)
+
+      const sellerId = selectedSeller?.id || 'unlinked'
+      const recordId = `${sellerId}_${cattle}_${dateObj.getFullYear()}${String(dateObj.getMonth() + 1).padStart(2, '0')}${String(dateObj.getDate()).padStart(2, '0')}`
+      const docRef = doc(db, 'buyerSelfRecords', user.uid, 'entries', recordId)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        setSelfErrors({ date: t('common.recordExistsError') })
+        setSelfLoading(false)
+        return
+      }
+
       await saveBuyerSelfRecord(
         user.uid,
-        selectedSeller?.id || 'unlinked',
-        new Date(),
+        sellerId,
+        dateObj,
         cattle,
         morning ? parseFloat(morning) : 0,
         evening ? parseFloat(evening) : 0
       )
       toast('Entry saved', 'success')
-      setMorning('')
-      setEvening('')
+      setSelfErrors({})
+      // Reset fields to defaults if available, otherwise clear
+      if (buyerMember) {
+        const defaultMorning = buyerMember.morning?.[cattle] ?? ''
+        const defaultEvening = buyerMember.evening?.[cattle] ?? ''
+        setMorning(defaultMorning ? String(defaultMorning) : '')
+        setEvening(defaultEvening ? String(defaultEvening) : '')
+      } else {
+        setMorning('')
+        setEvening('')
+      }
       reload()
     } catch {
       toast(t('common.error'), 'error')
@@ -110,7 +206,16 @@ export default function MyRecords() {
                     {t('buyer.records.selfEntry')}
                   </p>
                 </div>
-                <CattleSelector value={cattle} onChange={setCattle} className="mb-4" />
+                <div className="mb-4">
+                  <Input
+                    label={t('common.date')}
+                    type="date"
+                    max={new Date().toISOString().split('T')[0]}
+                    value={entryDate}
+                    onChange={e => setEntryDate(e.target.value)}
+                    error={selfErrors.date}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <Input
                     label={t('common.morning')}
@@ -134,7 +239,7 @@ export default function MyRecords() {
                   />
                 </div>
                 <Button size="full" loading={selfLoading} onClick={handleSelfEntry}>
-                  Save Today's Entry
+                  {t('entry.saveEntry')}
                 </Button>
               </Card>
             </>
@@ -173,10 +278,6 @@ export default function MyRecords() {
             ))}
           </div>
 
-          <div className="px-4 pt-4">
-            <CattleSelector value={cattle} onChange={setCattle} />
-          </div>
-
           {/* Tabs */}
           <div className="flex gap-1 px-4 pt-3">
             {['records', 'self-entry'].map(t_ => (
@@ -212,39 +313,44 @@ export default function MyRecords() {
               )
             ) : (
               <div className="px-4">
-                {!isCurrentMonth ? (
-                  <p className="text-sm text-gray-400 text-center py-10">
-                    You can only add entries for the current month
-                  </p>
-                ) : (
-                  <Card>
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <Input
-                        label={t('common.morning')}
-                        type="number"
-                        inputMode="decimal"
-                        placeholder="0.0"
-                        suffix="L"
-                        value={morning}
-                        onChange={e => setMorning(e.target.value)}
-                        error={selfErrors.morning}
-                      />
-                      <Input
-                        label={t('common.evening')}
-                        type="number"
-                        inputMode="decimal"
-                        placeholder="0.0"
-                        suffix="L"
-                        value={evening}
-                        onChange={e => setEvening(e.target.value)}
-                        error={selfErrors.evening}
-                      />
-                    </div>
-                    <Button size="full" loading={selfLoading} onClick={handleSelfEntry}>
-                      Save Today's Entry
-                    </Button>
-                  </Card>
-                )}
+                <Card>
+                  <div className="mb-4">
+                    <Input
+                      label={t('common.date')}
+                      type="date"
+                      min={dateLimits.min}
+                      max={dateLimits.max}
+                      value={entryDate}
+                      onChange={e => setEntryDate(e.target.value)}
+                      error={selfErrors.date}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <Input
+                      label={t('common.morning')}
+                      type="number"
+                      inputMode="decimal"
+                      placeholder="0.0"
+                      suffix="L"
+                      value={morning}
+                      onChange={e => setMorning(e.target.value)}
+                      error={selfErrors.morning}
+                    />
+                    <Input
+                      label={t('common.evening')}
+                      type="number"
+                      inputMode="decimal"
+                      placeholder="0.0"
+                      suffix="L"
+                      value={evening}
+                      onChange={e => setEvening(e.target.value)}
+                      error={selfErrors.evening}
+                    />
+                  </div>
+                  <Button size="full" loading={selfLoading} onClick={handleSelfEntry}>
+                    {t('entry.saveEntry')}
+                  </Button>
+                </Card>
               </div>
             )}
           </div>

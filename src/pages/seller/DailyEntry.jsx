@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/config/firebase'
 import { useAuth } from '@/context/AuthContext'
 import { useApp } from '@/context/AppContext'
 import { useBuyerList } from '@/hooks/useSeller'
@@ -48,11 +50,20 @@ export default function DailyEntry() {
     if (Object.keys(errs).length) { setErrors(errs); return }
     setLoading(true)
     try {
+      const today = new Date()
+      // Check if record already exists
+      const recordId = `${selectedBuyer.id}_${cattle}_${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`
+      const docRef = doc(db, 'records', user.uid, 'entries', recordId)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        toast('Record for today already exists for this cattle type', 'error')
+        setLoading(false)
+        return
+      }
+
       const m = morning ? parseFloat(morning) : 0
       const e = evening ? parseFloat(evening) : 0
-      const setM = selectedBuyer.morning?.[cattle] ?? 0
-      const setE = selectedBuyer.evening?.[cattle] ?? 0
-      await saveRecord(user.uid, selectedBuyer.id, new Date(), cattle, m, e, setM, setE, 'manual')
+      await saveRecord(user.uid, selectedBuyer.id, today, cattle, m, e, 'manual')
       toast('Entry saved', 'success')
       setSaved(true)
       setMorning('')

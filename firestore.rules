@@ -39,7 +39,9 @@ service cloud.firestore {
     match /records/{sellerId}/entries/{recordId} {
       allow write: if isUser(sellerId);
       allow read: if isUser(sellerId) ||
-        (isAuth() && resource.data.buyerId == request.auth.uid);
+        (isAuth() && (resource.data.buyerId == request.auth.uid ||
+         (exists(/databases/$(database)/documents/sellerBuyers/$(sellerId)/members/$(resource.data.buyerId)) &&
+          get(/databases/$(database)/documents/sellerBuyers/$(sellerId)/members/$(resource.data.buyerId)).data.linkedUserId == request.auth.uid)));
     }
 
     // BuyerSelfRecords: buyer only
@@ -51,7 +53,9 @@ service cloud.firestore {
     match /payments/{sellerId}/transactions/{paymentId} {
       allow write: if isUser(sellerId);
       allow read: if isUser(sellerId) ||
-        (isAuth() && resource.data.buyerId == request.auth.uid);
+        (isAuth() && (resource.data.buyerId == request.auth.uid ||
+         (exists(/databases/$(database)/documents/sellerBuyers/$(sellerId)/members/$(resource.data.buyerId)) &&
+          get(/databases/$(database)/documents/sellerBuyers/$(sellerId)/members/$(resource.data.buyerId)).data.linkedUserId == request.auth.uid)));
     }
 
     // Buyers profile: buyer reads/writes own doc

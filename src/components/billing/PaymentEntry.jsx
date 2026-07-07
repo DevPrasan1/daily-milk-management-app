@@ -16,8 +16,8 @@ export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved
   const [loading, setLoading] = useState(false)
 
   async function handleSave() {
-    const err = validatePrice(amount)
-    if (err) { setError(err); return }
+    // const err = validatePrice(amount)
+    // if (err) { setError(err); return }
     setError(null)
     setLoading(true)
     try {

@@ -6,7 +6,7 @@ export default function AppShell({ children, showNav = true }) {
     <div className="flex items-start justify-center min-h-screen bg-gray-200 dark:bg-gray-700">
       <div className="relative w-full max-w-[390px] min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col overflow-hidden shadow-2xl">
         <ToastContainer />
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className={`flex flex-col flex-1 overflow-hidden ${showNav ? 'pb-16' : ''}`}>
           {children}
         </div>
         {showNav && <BottomNav />}

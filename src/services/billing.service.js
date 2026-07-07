@@ -1,6 +1,6 @@
 import {
   collection, doc, addDoc, getDocs, query,
-  where, orderBy, Timestamp, serverTimestamp,
+  where, orderBy, Timestamp, serverTimestamp, deleteDoc
 } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 
@@ -45,4 +45,8 @@ export function calcBillSummary(records, pricePerLitre, payments) {
   const totalPaid = payments.reduce((sum, p) => sum + (p.amount || 0), 0)
   const remaining = parseFloat((totalAmount - totalPaid).toFixed(2))
   return { totalLitres, totalAmount, totalPaid, remaining }
+}
+
+export async function deletePayment(sellerId, paymentId) {
+  await deleteDoc(doc(db, 'payments', sellerId, 'transactions', paymentId))
 }

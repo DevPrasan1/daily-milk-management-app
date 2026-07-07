@@ -126,6 +126,14 @@ export default function AddEditBuyer() {
         if (e) errs[`evening_${idx}`] = e
       }
     })
+    if (!isEdit && startDate) {
+      const today = new Date()
+      const minDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`
+      const maxDateStr = today.toISOString().split('T')[0]
+      if (startDate < minDateStr || startDate > maxDateStr) {
+        errs.startDate = t('seller.buyers.startDateError')
+      }
+    }
     return errs
   }
 
@@ -155,7 +163,7 @@ export default function AddEditBuyer() {
       } else {
         const newBuyerId = await addBuyer(user.uid, data)
         if (startDate) {
-          backfillRecordsForBuyer(user.uid, newBuyerId, morning, evening, startDate)
+          await backfillRecordsForBuyer(user.uid, newBuyerId, morning, evening, startDate)
         }
         toast('Buyer added', 'success')
         if (phone.trim()) {
@@ -204,12 +212,13 @@ export default function AddEditBuyer() {
           />
           {!isEdit && (
             <Input
-              label="Start Date (optional)"
+              label={t('seller.buyers.startDate')}
               type="date"
-              min={(() => { const d = new Date(); d.setMonth(d.getMonth() - 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01` })()}
+              min={(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01` })()}
               max={new Date().toISOString().split('T')[0]}
               value={startDate}
               onChange={e => setStartDate(e.target.value)}
+              error={errors.startDate}
             />
           )}
 

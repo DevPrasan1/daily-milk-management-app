@@ -112,7 +112,8 @@ export async function backfillRecordsForBuyer(sellerId, buyerId, morning, evenin
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const from = new Date(startDate)
+  const [yr, mo, dy] = startDate.split('-').map(Number)
+  const from = new Date(yr, mo - 1, dy)
   from.setHours(0, 0, 0, 0)
 
   if (from > today) return

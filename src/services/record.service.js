@@ -32,12 +32,11 @@ export async function getRecordsForMonthAllBuyers(sellerId, year, month) {
   return snap.docs.map(d => ({ id: d.id, ...d.data() }))
 }
 
-export async function saveRecord(sellerId, buyerId, date, cattleType, morning, evening, setMorning, setEvening, source = 'manual') {
+export async function saveRecord(sellerId, buyerId, date, cattleType, morning, evening, source = 'manual') {
   const total = parseFloat((morning + evening).toFixed(2))
-  const abnormal = isAbnormal(morning, evening, setMorning, setEvening)
+  const abnormal = isAbnormal(morning, evening)
   const dateTs = Timestamp.fromDate(new Date(date.getFullYear(), date.getMonth(), date.getDate()))
   const recordId = `${buyerId}_${cattleType}_${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`
-
   await setDoc(doc(db, 'records', sellerId, 'entries', recordId), {
     buyerId,
     date: dateTs,
@@ -45,8 +44,8 @@ export async function saveRecord(sellerId, buyerId, date, cattleType, morning, e
     morning,
     evening,
     total,
-    setMorning: setMorning ?? morning,
-    setEvening: setEvening ?? evening,
+    // setMorning: setMorning ?? morning,
+    // setEvening: setEvening ?? evening, 
     isAbnormal: abnormal,
     source,
     ...(source === 'manual' ? { manualEditedAt: serverTimestamp() } : {}),

@@ -1,33 +1,38 @@
-import { clsx } from 'clsx'
+import { useTranslation } from 'react-i18next'
+import { CATTLE_OPTIONS } from '@/utils/constants'
 
-const ALL_OPTIONS = [
-  { value: 'cow', label: 'Cow', emoji: '🐄' },
-  { value: 'buffalo', label: 'Buffalo', emoji: '🐃' },
-]
+const EMOJIS = {
+  cow: '🐄',
+  buffalo: '🐃',
+  goat: '🐐',
+  camel: '🐪',
+}
 
 export default function CattleSelector({ value, onChange, className, options }) {
+  const { i18n } = useTranslation()
+  const isHindi = i18n.language === 'hi'
+
   const visibleOptions = options
-    ? ALL_OPTIONS.filter(o => options.includes(o.value))
-    : ALL_OPTIONS
+    ? CATTLE_OPTIONS.filter(o => options.includes(o.value))
+    : CATTLE_OPTIONS
 
   return (
-    <div className={clsx('flex gap-2', className)}>
-      {visibleOptions.map(opt => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onChange(opt.value)}
-          className={clsx(
-            'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 text-sm font-medium transition-all min-h-[44px]',
-            value === opt.value
-              ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
-              : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'
-          )}
-        >
-          <span>{opt.emoji}</span>
-          {opt.label}
-        </button>
-      ))}
+    <div className={className}>
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/40 min-h-[44px]"
+      >
+        {visibleOptions.map(opt => {
+          const emoji = EMOJIS[opt.value] || '🥛'
+          const label = isHindi ? opt.labelHi : opt.labelEn
+          return (
+            <option key={opt.value} value={opt.value}>
+              {emoji} {label}
+            </option>
+          )
+        })}
+      </select>
     </div>
   )
 }

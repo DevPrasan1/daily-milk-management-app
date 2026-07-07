@@ -1,6 +1,6 @@
 import {
-  doc, getDoc, setDoc, updateDoc, deleteDoc, collection,
-  getDocs, query, where, limit, serverTimestamp,
+  doc, getDoc, setDoc, updateDoc, collection,
+  getDocs, query, where, limit, serverTimestamp, writeBatch,
 } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 
@@ -41,7 +41,41 @@ export async function getBuyer(sellerId, buyerId) {
 }
 
 export async function deleteBuyer(sellerId, buyerId) {
-  await deleteDoc(doc(db, 'sellerBuyers', sellerId, 'members', buyerId))
+  const refs = []
+
+  // 1. Buyer membership doc
+  refs.push(doc(db, 'sellerBuyers', sellerId, 'members', buyerId))
+
+  // 2. All records for this buyer
+  const recordsQuery = query(
+    collection(db, 'records', sellerId, 'entries'),
+    where('buyerId', '==', buyerId)
+  )
+  const recordsSnap = await getDocs(recordsQuery)
+  recordsSnap.forEach(d => {
+    refs.push(d.ref)
+  })
+
+  // 3. All payments for this buyer
+  const paymentsQuery = query(
+    collection(db, 'payments', sellerId, 'transactions'),
+    where('buyerId', '==', buyerId)
+  )
+  const paymentsSnap = await getDocs(paymentsQuery)
+  paymentsSnap.forEach(d => {
+    refs.push(d.ref)
+  })
+
+  // Commit in batches of 400 to stay safely under Firestore's 500 limit
+  const batchSize = 400
+  for (let i = 0; i < refs.length; i += batchSize) {
+    const batch = writeBatch(db)
+    const chunk = refs.slice(i, i + batchSize)
+    chunk.forEach(ref => {
+      batch.delete(ref)
+    })
+    await batch.commit()
+  }
 }
 
 export async function hasBuyerRecords(sellerId, buyerId) {

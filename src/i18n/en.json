@@ -31,7 +31,8 @@
     "error": "Something went wrong. Please try again.",
     "retry": "Retry",
     "noData": "No data yet",
-    "search": "Search"
+    "search": "Search",
+    "recordExistsError": "Record for this date and cattle type already exists"
   },
   "landing": {
     "tagline": "Apna dudh, apna hisaab",
@@ -79,7 +80,7 @@
     "addCattle": "Add Cattle Type",
     "cattleType": "Cattle Type",
     "pricePerLitre": "Price (₹/L)",
-    "totalMilk": "Total Milk (L/day)",
+    "totalMilk": "Total Milk for Selling (L/day)",
     "selectCattle": "Select cattle type",
     "removeCattle": "Remove",
     "cow": "Cow",
@@ -105,8 +106,8 @@
       "active": "Active",
       "inactive": "Inactive",
       "startDate": "Start Date",
-      "deleteConfirm": "Delete this buyer permanently?",
-      "hasRecordsError": "Cannot delete — buyer has existing records"
+      "startDateError": "Start date must be within the current month",
+      "deleteConfirm": "Delete this buyer permanently? All their milk records and payments will also be deleted."
     },
     "entry": {
       "title": "Daily Entry",
