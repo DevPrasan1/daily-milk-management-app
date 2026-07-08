@@ -27,6 +27,7 @@ export default function DailyEntry() {
   const [morning, setMorning] = useState('')
   const [evening, setEvening] = useState('')
   const [errors, setErrors] = useState({})
+  const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -63,11 +64,12 @@ export default function DailyEntry() {
 
       const m = morning ? parseFloat(morning) : 0
       const e = evening ? parseFloat(evening) : 0
-      await saveRecord(user.uid, selectedBuyer.id, today, cattle, m, e, 'manual')
+      await saveRecord(user.uid, selectedBuyer.id, today, cattle, m, e, comment, 'manual')
       toast('Entry saved', 'success')
       setSaved(true)
       setMorning('')
       setEvening('')
+      setComment('')
       setTimeout(() => setSaved(false), 2000)
     } catch {
       toast(t('common.error'), 'error')
@@ -148,6 +150,14 @@ export default function DailyEntry() {
                 <QuickQtyButtons onSelect={v => setEvening(String(v))} />
               </div>
             </div>
+
+          <Input
+              label="Comment"
+              placeholder="e.g. Buyer was out of town"
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+              className="mb-4"
+            />
 
             {selectedBuyer.autoMode && (
               <p className="text-xs text-amber-600 dark:text-amber-400 mb-3">

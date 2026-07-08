@@ -298,14 +298,14 @@ export default function AddEditBuyer() {
             </button>
           )}
 
-          <div className="mt-2">
+          {/* <div className="mt-2">
             <AutoModeToggle
               enabled={autoMode}
               onToggle={() => setAutoMode(v => !v)}
               label={t('seller.entry.autoMode')}
               description="Auto-create records at 8am & 8pm with set quantities"
             />
-          </div>
+          </div> */}
 
           <Button size="full" className="mt-4" loading={loading} onClick={handleSave}>
             {t('common.save')}

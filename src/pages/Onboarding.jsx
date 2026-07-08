@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { FullPageSpinner } from '@/components/ui/Spinner'
 import { doc, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 import { useAuth } from '@/context/AuthContext'
@@ -14,7 +15,7 @@ import { Milk, Plus, Trash2 } from 'lucide-react'
 export default function Onboarding() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { user, userProfile, refreshProfile } = useAuth()
+  const { user, userProfile, loading: authLoading, refreshProfile } = useAuth()
   const { toast } = useApp()
 
   const isSeller = userProfile?.role === ROLES.SELLER
@@ -27,6 +28,23 @@ export default function Onboarding() {
   const [cattleEntries, setCattleEntries] = useState([])
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) {
+      navigate('/login', { replace: true })
+      return
+    }
+    if (!userProfile?.role) {
+      navigate('/role-select', { replace: true })
+      return
+    }
+    if (userProfile?.name) {
+      navigate(userProfile.role === ROLES.SELLER ? '/seller' : '/buyer', { replace: true })
+    }
+  }, [user, userProfile, authLoading, navigate])
+
+  if (authLoading) return <FullPageSpinner />
 
   const usedTypes = cattleEntries.map(e => e.cattleType).filter(Boolean)
   const availableOptions = CATTLE_OPTIONS.filter(o => !usedTypes.includes(o.value))

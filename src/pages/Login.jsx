@@ -5,6 +5,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber, signInWithEmailAndPassword, c
 import { auth } from '@/config/firebase'
 import { useApp } from '@/context/AppContext'
 import { validatePhone, validateOtp } from '@/utils/validators'
+import AppShell from '@/components/layout/AppShell'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { ArrowLeft, Phone, Mail } from 'lucide-react'
@@ -102,137 +103,139 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col px-6">
-      <div id="recaptcha-container" />
+    <AppShell showNav={false}>
+      <div className="min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col px-6">
+        <div id="recaptcha-container" />
 
-      {/* Header */}
-      <div className="flex items-center pt-12 mb-8">
-        <button
-          onClick={() => step === 'otp' ? setStep('phone') : navigate('/')}
-          className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 min-h-[44px] min-w-[44px] flex items-center justify-center"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-        </button>
-      </div>
-
-      <div className="flex flex-col flex-1">
-        <div className="w-12 h-12 rounded-2xl bg-[#1D9E75]/10 flex items-center justify-center mb-6">
-          <Phone className="w-6 h-6 text-[#1D9E75]" />
+        {/* Header */}
+        <div className="flex items-center pt-12 mb-8">
+          <button
+            onClick={() => step === 'otp' ? setStep('phone') : navigate('/')}
+            className="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          </button>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-          {t('login.title')}
-        </h1>
+        <div className="flex flex-col flex-1">
+          <div className="w-12 h-12 rounded-2xl bg-[#1D9E75]/10 flex items-center justify-center mb-6">
+            <Phone className="w-6 h-6 text-[#1D9E75]" />
+          </div>
 
-        {step === 'phone' ? (
-          <>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-              We'll send a one-time password to verify your number
-            </p>
-            <Input
-              label={t('common.phone')}
-              type="tel"
-              inputMode="numeric"
-              maxLength={10}
-              placeholder={t('login.phonePlaceholder')}
-              prefix="+91"
-              value={phone}
-              onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
-              error={phoneError}
-            />
-            <Button
-              size="full"
-              className="mt-6"
-              loading={loading}
-              onClick={handleSendOtp}
-            >
-              {t('login.sendOtp')}
-            </Button>
-          </>
-        ) : (
-          <>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-              {t('login.otpSent')} +91 {phone}
-            </p>
-            <Input
-              label="OTP"
-              type="tel"
-              inputMode="numeric"
-              maxLength={6}
-              placeholder={t('login.otpPlaceholder')}
-              value={otp}
-              onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
-              error={otpError}
-            />
-            <Button
-              size="full"
-              className="mt-6"
-              loading={loading}
-              onClick={handleVerifyOtp}
-            >
-              {t('login.verifyOtp')}
-            </Button>
-            <div className="flex items-center justify-center mt-4">
-              {resendCountdown > 0 ? (
-                <p className="text-sm text-gray-400">
-                  {t('login.resendIn')} {resendCountdown}s
-                </p>
-              ) : (
-                <button
-                  onClick={() => { setStep('phone'); setOtp('') }}
-                  className="text-sm text-[#1D9E75] font-medium"
-                >
-                  {t('login.changeNumber')}
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            {t('login.title')}
+          </h1>
 
-      {IS_DEV && (
-        <div className="mt-auto pb-8">
-          {!showDevLogin ? (
-            <button
-              onClick={() => setShowDevLogin(true)}
-              className="w-full flex items-center justify-center gap-2 text-xs text-gray-400 py-2"
-            >
-              <Mail className="w-3 h-3" />
-              Dev: sign in with email
-            </button>
-          ) : (
-            <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 space-y-3">
-              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
-                <Mail className="w-3 h-3" /> Dev login
+          {step === 'phone' ? (
+            <>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+                We'll send a one-time password to verify your number
               </p>
               <Input
-                label="Email"
-                type="email"
-                placeholder="seller@test.com"
-                value={devEmail}
-                onChange={e => setDevEmail(e.target.value)}
+                label={t('common.phone')}
+                type="tel"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder={t('login.phonePlaceholder')}
+                prefix="+91"
+                value={phone}
+                onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
+                error={phoneError}
               />
-              <Input
-                label="Password"
-                type="password"
-                placeholder="test123456"
-                value={devPassword}
-                onChange={e => setDevPassword(e.target.value)}
-                error={devError}
-              />
-              <Button size="full" loading={loading} onClick={handleDevLogin}>
-                Sign in / Create account
-              </Button>
-              <button
-                onClick={() => setShowDevLogin(false)}
-                className="w-full text-xs text-gray-400 text-center"
+              <Button
+                size="full"
+                className="mt-6"
+                loading={loading}
+                onClick={handleSendOtp}
               >
-                Cancel
-              </button>
-            </div>
+                {t('login.sendOtp')}
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+                {t('login.otpSent')} +91 {phone}
+              </p>
+              <Input
+                label="OTP"
+                type="tel"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder={t('login.otpPlaceholder')}
+                value={otp}
+                onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                error={otpError}
+              />
+              <Button
+                size="full"
+                className="mt-6"
+                loading={loading}
+                onClick={handleVerifyOtp}
+              >
+                {t('login.verifyOtp')}
+              </Button>
+              <div className="flex items-center justify-center mt-4">
+                {resendCountdown > 0 ? (
+                  <p className="text-sm text-gray-400">
+                    {t('login.resendIn')} {resendCountdown}s
+                  </p>
+                ) : (
+                  <button
+                    onClick={() => { setStep('phone'); setOtp('') }}
+                    className="text-sm text-[#1D9E75] font-medium"
+                  >
+                    {t('login.changeNumber')}
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
-      )}
-    </div>
+
+        {IS_DEV && (
+          <div className="mt-auto pb-8">
+            {!showDevLogin ? (
+              <button
+                onClick={() => setShowDevLogin(true)}
+                className="w-full flex items-center justify-center gap-2 text-xs text-gray-400 py-2"
+              >
+                <Mail className="w-3 h-3" />
+                Dev: sign in with email
+              </button>
+            ) : (
+              <div className="border border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 space-y-3">
+                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                  <Mail className="w-3 h-3" /> Dev login
+                </p>
+                <Input
+                  label="Email"
+                  type="email"
+                  placeholder="seller@test.com"
+                  value={devEmail}
+                  onChange={e => setDevEmail(e.target.value)}
+                />
+                <Input
+                  label="Password"
+                  type="password"
+                  placeholder="test123456"
+                  value={devPassword}
+                  onChange={e => setDevPassword(e.target.value)}
+                  error={devError}
+                />
+                <Button size="full" loading={loading} onClick={handleDevLogin}>
+                  Sign in / Create account
+                </Button>
+                <button
+                  onClick={() => setShowDevLogin(false)}
+                  className="w-full text-xs text-gray-400 text-center"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </AppShell>
   )
 }

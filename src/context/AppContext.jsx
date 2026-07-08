@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useContext, useReducer, useEffect } from 'react'
 
 const AppContext = createContext(null)
 
@@ -7,6 +7,7 @@ const initialState = {
   selectedBuyerId: null,
   selectedMonth: null,
   selectedCattle: 'cow',
+  panchang: null,
 }
 
 function appReducer(state, action) {
@@ -21,6 +22,8 @@ function appReducer(state, action) {
       return { ...state, selectedMonth: action.month }
     case 'SET_SELECTED_CATTLE':
       return { ...state, selectedCattle: action.cattle }
+    case 'SET_PANCHANG':
+      return { ...state, panchang: action.payload }
     default:
       return state
   }
@@ -28,6 +31,13 @@ function appReducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState)
+
+  useEffect(() => {
+    fetch('/panchang.json')
+      .then(res => res.json())
+      .then(data => dispatch({ type: 'SET_PANCHANG', payload: data }))
+      .catch(err => console.error('Failed to load panchang:', err))
+  }, [])
 
   function toast(message, type = 'info') {
     const id = Date.now()

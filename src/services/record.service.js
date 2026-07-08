@@ -32,7 +32,7 @@ export async function getRecordsForMonthAllBuyers(sellerId, year, month) {
   return snap.docs.map(d => ({ id: d.id, ...d.data() }))
 }
 
-export async function saveRecord(sellerId, buyerId, date, cattleType, morning, evening, source = 'manual') {
+export async function saveRecord(sellerId, buyerId, date, cattleType, morning, evening, comment = '', source = 'manual') {
   const total = parseFloat((morning + evening).toFixed(2))
   const abnormal = isAbnormal(morning, evening)
   const dateTs = Timestamp.fromDate(new Date(date.getFullYear(), date.getMonth(), date.getDate()))
@@ -48,6 +48,7 @@ export async function saveRecord(sellerId, buyerId, date, cattleType, morning, e
     // setEvening: setEvening ?? evening, 
     isAbnormal: abnormal,
     source,
+    comment,
     ...(source === 'manual' ? { manualEditedAt: serverTimestamp() } : {}),
     createdAt: serverTimestamp(),
   }, { merge: true })

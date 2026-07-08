@@ -164,5 +164,37 @@
       "distance": "दूरी",
       "requestLink": "जुड़ने का अनुरोध"
     }
+  },
+  "panchang": {
+    "chaitra": "चैत्र",
+    "vaishakha": "वैशाख",
+    "jyeshtha": "ज्येष्ठ",
+    "ashadha": "आषाढ़",
+    "shravana": "श्रावण",
+    "bhadrapada": "भाद्रपद",
+    "ashwin": "आश्विन",
+    "kartika": "कार्तिक",
+    "margashirsha": "मार्गशीर्ष",
+    "pausha": "पौष",
+    "magha": "माघ",
+    "phalguna": "फाल्गुन",
+    "shukla": "शुक्ल पक्ष",
+    "krishna": "कृष्ण पक्ष",
+    "pratipada": "प्रतिपदा/एकम",
+    "dwitiya": "द्वितीया",
+    "tritiya": "तृतीया",
+    "chaturthi": "चतुर्थी",
+    "panchami": "पंचमी",
+    "shashthi": "षष्ठी",
+    "saptami": "सप्तमी",
+    "ashtami": "अष्टमी",
+    "navami": "नवमी",
+    "dashami": "दशमी",
+    "ekadashi": "एकादशी",
+    "dwadashi": "द्वादशी",
+    "trayodashi": "त्रयोदशी",
+    "chaturdashi": "चतुर्दशी",
+    "purnima": "पूर्णिमा",
+    "amavasya": "अमावस्या"
   }
 }

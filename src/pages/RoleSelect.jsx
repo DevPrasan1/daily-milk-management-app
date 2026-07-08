@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { FullPageSpinner } from '@/components/ui/Spinner'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 import { useAuth } from '@/context/AuthContext'
@@ -28,11 +29,28 @@ const roles = [
 export default function RoleSelect() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { user, refreshProfile } = useAuth()
+  const { user, userProfile, loading: authLoading, refreshProfile } = useAuth()
   const { toast } = useApp()
 
   const [selected, setSelected] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) {
+      navigate('/login', { replace: true })
+      return
+    }
+    if (userProfile?.role) {
+      if (userProfile?.name) {
+        navigate(userProfile.role === ROLES.SELLER ? '/seller' : '/buyer', { replace: true })
+      } else {
+        navigate('/onboarding', { replace: true })
+      }
+    }
+  }, [user, userProfile, authLoading, navigate])
+
+  if (authLoading) return <FullPageSpinner />
 
   async function handleContinue() {
     if (!selected) return

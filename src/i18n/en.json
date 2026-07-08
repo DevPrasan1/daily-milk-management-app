@@ -164,5 +164,37 @@
       "distance": "away",
       "requestLink": "Request to Link"
     }
+  },
+  "panchang": {
+    "chaitra": "Chaitra",
+    "vaishakha": "Vaishakha",
+    "jyeshtha": "Jyeshtha",
+    "ashadha": "Ashadha",
+    "shravana": "Shravana",
+    "bhadrapada": "Bhadrapada",
+    "ashwin": "Ashwin",
+    "kartika": "Kartika",
+    "margashirsha": "Margashirsha",
+    "pausha": "Pausha",
+    "magha": "Magha",
+    "phalguna": "Phalguna",
+    "shukla": "Shukla Paksha",
+    "krishna": "Krishna Paksha",
+    "pratipada": "Pratipada/Ekam",
+    "dwitiya": "Dwitiya",
+    "tritiya": "Tritiya",
+    "chaturthi": "Chaturthi",
+    "panchami": "Panchami",
+    "shashthi": "Shashthi",
+    "saptami": "Saptami",
+    "ashtami": "Ashtami",
+    "navami": "Navami",
+    "dashami": "Dashami",
+    "ekadashi": "Ekadashi",
+    "dwadashi": "Dwadashi",
+    "trayodashi": "Trayodashi",
+    "chaturdashi": "Chaturdashi",
+    "purnima": "Purnima",
+    "amavasya": "Amavasya"
   }
 }

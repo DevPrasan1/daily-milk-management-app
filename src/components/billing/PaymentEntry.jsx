@@ -12,6 +12,7 @@ export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved
   const { toast } = useApp()
   const [amount, setAmount] = useState('')
   const [note, setNote] = useState('')
+  const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -21,10 +22,13 @@ export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved
     setError(null)
     setLoading(true)
     try {
-      await addPayment(sellerId, buyerId, parseFloat(amount), new Date(), note)
+      const [yr, mo, dy] = paymentDate.split('-').map(Number)
+      const dateObj = new Date(yr, mo - 1, dy)
+      await addPayment(sellerId, buyerId, parseFloat(amount), dateObj, note)
       toast('Payment recorded', 'success')
       setAmount('')
       setNote('')
+      setPaymentDate(new Date().toISOString().split('T')[0])
       onSaved?.()
       onClose()
     } catch {
@@ -46,6 +50,13 @@ export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved
           value={amount}
           onChange={e => setAmount(e.target.value)}
           error={error}
+        />
+        <Input
+          label={t('common.date') || 'Date'}
+          type="date"
+          max={new Date().toISOString().split('T')[0]}
+          value={paymentDate}
+          onChange={e => setPaymentDate(e.target.value)}
         />
         <Input
           label={t('seller.billing.paymentNote')}

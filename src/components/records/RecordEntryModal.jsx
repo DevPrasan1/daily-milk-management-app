@@ -25,6 +25,7 @@ export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSav
   const [entryDate, setEntryDate] = useState(new Date().toISOString().split('T')[0])
   const [morning, setMorning] = useState('')
   const [evening, setEvening] = useState('')
+  const [comment, setComment] = useState('')
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
@@ -90,8 +91,9 @@ export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSav
       const m = morning ? parseFloat(morning) : 0
       const e = evening ? parseFloat(evening) : 0
 
-      await saveRecord(sellerId, buyer.id, dateObj, cattle, m, e, 'manual')
+      await saveRecord(sellerId, buyer.id, dateObj, cattle, m, e, comment, 'manual')
       toast('Entry saved', 'success')
+      setComment('')
       onSaved?.()
       onClose()
     } catch {
@@ -137,6 +139,13 @@ export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSav
             error={errors.evening}
           />
         </div>
+
+        <Input
+          label="Comment"
+          placeholder="e.g. Buyer was out of town"
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+        />
 
         <Button size="full" loading={loading} onClick={handleSave}>
           {t('common.save')}
