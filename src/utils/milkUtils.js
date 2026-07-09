@@ -13,7 +13,9 @@ export function formatLitres(val) {
 
 export function formatAmount(val) {
   if (!val && val !== 0) return '—'
-  return `₹${parseFloat(val).toFixed(0)}`
+  const parsed = parseFloat(val)
+  const formatted = parsed % 1 === 0 ? parsed.toFixed(0) : parsed.toFixed(2)
+  return `₹${formatted}`
 }
 
 export function isAbnormal(morning, evening, setMorning, setEvening) {

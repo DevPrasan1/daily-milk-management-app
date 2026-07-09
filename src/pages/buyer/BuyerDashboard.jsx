@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/context/AuthContext'
-import { getMilkBooks } from '@/services/milkbook.service'
+import { getMilkBooks, getMilkBookRecords, getMilkBookPayments } from '@/services/milkbook.service'
 import AppShell from '@/components/layout/AppShell'
 import TopBar from '@/components/layout/TopBar'
 import PageWrapper from '@/components/layout/PageWrapper'
@@ -11,6 +11,7 @@ import Card from '@/components/ui/Card'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
 import { Milk, IndianRupee, Store, MapPin, Plus, ClipboardList } from 'lucide-react'
+import { formatAmount } from '@/utils/milkUtils'
 
 export default function BuyerDashboard() {
   const { t } = useTranslation()
@@ -19,6 +20,7 @@ export default function BuyerDashboard() {
   
   const [books, setBooks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [totalDue, setTotalDue] = useState(0)
 
   useEffect(() => {
     if (user) {
@@ -28,6 +30,46 @@ export default function BuyerDashboard() {
         .finally(() => setLoading(false))
     }
   }, [user])
+
+  useEffect(() => {
+    if (books.length === 0) {
+      setTotalDue(0)
+      return
+    }
+
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = now.getMonth()
+
+    const fetchDue = async () => {
+      let sumDue = 0
+      
+      await Promise.all(books.map(async (b) => {
+        try {
+          const [recs, pays] = await Promise.all([
+            getMilkBookRecords(b.id, year, month),
+            getMilkBookPayments(b.id, year, month)
+          ])
+          
+          let totalAmount = 0
+          recs.forEach(r => {
+            const price = b.prices?.[r.cattleType] ?? 0
+            totalAmount += (r.total || 0) * price
+          })
+          
+          const totalPaid = pays.reduce((sum, p) => sum + (p.amount || 0), 0)
+          const remaining = totalAmount - totalPaid
+          sumDue += remaining
+        } catch (e) {
+          console.error('Error fetching due for book:', b.id, e)
+        }
+      }))
+      
+      setTotalDue(sumDue)
+    }
+
+    fetchDue()
+  }, [books])
 
   const myBooks = books.filter(b => b.isCreator)
   const sharedBooks = books.filter(b => !b.isCreator)
@@ -51,17 +93,18 @@ export default function BuyerDashboard() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-3 gap-3 mb-5">
           {[
-            { icon: ClipboardList, label: 'My Managed Books', value: String(myBooks.length) },
-            { icon: Milk, label: 'Shared with Me', value: String(sharedBooks.length) },
+            { icon: ClipboardList, label: 'Managed Books', value: String(myBooks.length) },
+            { icon: Milk, label: 'Shared Books', value: String(sharedBooks.length) },
+            { icon: IndianRupee, label: 'Pending Dues', value: formatAmount(totalDue) },
           ].map(({ icon: Icon, label, value }) => (
             <Card key={label} className="flex flex-col gap-2">
               <div className="w-8 h-8 rounded-xl bg-[#1D9E75]/10 flex items-center justify-center">
                 <Icon className="w-4 h-4 text-[#1D9E75]" />
               </div>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+              <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{value}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
             </Card>
           ))}
         </div>

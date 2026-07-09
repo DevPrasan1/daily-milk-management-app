@@ -137,6 +137,11 @@ export default function MilkBookDetail() {
       `
     }).join('')
 
+    const formatPdfAmt = (val) => {
+      const parsed = parseFloat(val || 0)
+      return parsed % 1 === 0 ? parsed.toFixed(0) : parsed.toFixed(2)
+    }
+
     const breakdownRows = activeCattleTypes.map(type => {
       const litres = records.filter(r => r.cattleType === type).reduce((sum, r) => sum + (r.total || 0), 0)
       const priceVal = getCattlePrice(type)
@@ -145,17 +150,19 @@ export default function MilkBookDetail() {
       return `
         <div class="meta-row">
           <span class="meta-label">${emoji} <span style="text-transform: capitalize;">${type}</span> (${litres.toFixed(1)} L):</span>
-          <span class="meta-value">₹${priceVal}/L = ₹${subtotal.toFixed(2)}</span>
+          <span class="meta-value">₹${priceVal}/L = ₹${formatPdfAmt(subtotal)}</span>
         </div>
       `
     }).join('')
 
     const paymentRows = payments.map(p => {
       const pDate = p.date?.toDate ? p.date.toDate() : new Date(p.date)
+      const amt = p.amount || 0
+      const formattedAmt = amt % 1 === 0 ? amt.toFixed(0) : amt.toFixed(2)
       return `
         <tr>
           <td>${pDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
-          <td><strong>₹${(p.amount || 0).toFixed(2)}</strong></td>
+          <td><strong>₹${formattedAmt}</strong></td>
           <td>${p.note || '—'}</td>
         </tr>
       `
@@ -336,15 +343,15 @@ export default function MilkBookDetail() {
               </div>
               <div class="meta-row">
                 <span class="meta-label">Total Amount:</span>
-                <span class="meta-value">₹${summary.totalAmount.toFixed(2)}</span>
+                <span class="meta-value">₹${formatPdfAmt(summary.totalAmount)}</span>
               </div>
               <div class="meta-row">
                 <span class="meta-label">Total Paid:</span>
-                <span class="meta-value">₹${summary.totalPaid.toFixed(2)}</span>
+                <span class="meta-value">₹${formatPdfAmt(summary.totalPaid)}</span>
               </div>
               <div class="meta-row">
                 <span class="meta-label">Balance Due:</span>
-                <span class="meta-value ${summary.remaining > 0 ? 'remaining-alert' : ''}">₹${summary.remaining.toFixed(2)}</span>
+                <span class="meta-value ${summary.remaining > 0 ? 'remaining-alert' : ''}">₹${formatPdfAmt(summary.remaining)}</span>
               </div>
             </div>
           </div>
