@@ -4,6 +4,55 @@ A modern, responsive Progressive Web Application (PWA) designed for dairy seller
 
 ---
 
+## App Screenshots
+
+<table>
+  <tr>
+    <td width="33%" align="center">
+      <b>Home Dashboard (Buyer)</b><br/>
+      <img src="public/screenshots/home_1.jpeg" width="100%" alt="Home Buyer" />
+    </td>
+    <td width="33%" align="center">
+      <b>Shared Ledgers List</b><br/>
+      <img src="public/screenshots/home_2.jpeg" width="100%" alt="Home Books" />
+    </td>
+     <td width="33%" align="center">
+      <b>Login Screen</b><br/>
+      <img src="public/screenshots/login_1.jpeg" width="100%" alt="Login" />
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
+      <b>Seller Dashboard</b><br/>
+      <img src="public/screenshots/seller_1.jpeg" width="100%" alt="Seller Home" />
+    </td>
+    <td width="33%" align="center">
+      <b>Nearby Sellers Search</b><br/>
+      <img src="public/screenshots/seller_nearby_1.jpeg" width="100%" alt="Map Discovery" />
+    </td>
+    <td width="33%" align="center">
+      <b>Seller Settings</b><br/>
+      <img src="public/screenshots/seller_settings_1.jpeg" width="100%" alt="Seller Settings" />
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
+      <b>Add MilkBook Ledger</b><br/>
+      <img src="public/screenshots/milkbooks_add_1.jpeg" width="100%" alt="Create Book" />
+    </td>
+    <td width="33%" align="center">
+      <b>Ledger Records View</b><br/>
+      <img src="public/screenshots/milkbooks_view_1.jpeg" width="100%" alt="Ledger Log" />
+    </td>
+    <td width="33%" align="center">
+      <b>Billing & Payment Entry</b><br/>
+      <img src="public/screenshots/milkbooks_view_2.jpeg" width="100%" alt="Ledger Payments" />
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Key Features
 
 1. **Shared Peer-to-Peer Ledgers**: Anyone (buyer or seller) can create a **MilkBook** ledger. If the partner's phone is added, the book is automatically linked to their profile, granting them read-only view access.
