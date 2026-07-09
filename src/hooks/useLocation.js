@@ -1,13 +1,15 @@
 import { useState, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function useLocation() {
+  const { t } = useTranslation()
   const [coords, setCoords] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const getLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported on this device')
+      setError(t('location.errUnknown'))
       return
     }
     setLoading(true)
@@ -18,12 +20,20 @@ export function useLocation() {
         setLoading(false)
       },
       err => {
-        setError(err.message)
+        let msg = t('location.errUnknown')
+        if (err.code === 1) {
+          msg = t('location.errDenied')
+        } else if (err.code === 2) {
+          msg = t('location.errUnavailable')
+        } else if (err.code === 3) {
+          msg = t('location.errTimeout')
+        }
+        setError(msg)
         setLoading(false)
       },
       { timeout: 8000, maximumAge: 60000 }
     )
-  }, [])
+  }, [t])
 
   return { coords, setCoords, loading, error, getLocation }
 }

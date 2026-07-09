@@ -162,8 +162,10 @@ export default function SellerSettings() {
   }
 
   async function handleLogout() {
-    await signOut(auth)
-    navigate('/')
+    if (window.confirm(t('common.logoutConfirm'))) {
+      await signOut(auth)
+      navigate('/')
+    }
   }
 
   function toggleLanguage() {
@@ -194,7 +196,7 @@ export default function SellerSettings() {
               onChange={e => setName(e.target.value)}
             />
             <Input
-              label={t('common.note')}
+              label={t('onboarding.aboutLabel')}
               value={about}
               onChange={e => setAbout(e.target.value)}
             />

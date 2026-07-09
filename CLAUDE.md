@@ -36,7 +36,7 @@ No automated tests exist in this project.
 ThemeProvider → AuthProvider → AppProvider → Routes
 ```
 
-- **AuthContext** (`src/context/AuthContext.jsx`) — wraps Firebase `onAuthStateChanged`; exposes `user`, `userProfile`, and `refreshProfile()`. Automatically runs `linkPendingMilkbooks()` on login to link any books pre-created with the user's phone.
+- **AuthContext** (`src/context/AuthContext.jsx`) — wraps Firebase `onAuthStateChanged`; exposes `user`, `userProfile`, and `refreshProfile()`.
 - **AppContext** (`src/context/AppContext.jsx`) — global UI state via `useReducer`: toast queue, etc. Exposes `toast(message, type)` helper.
 - **ThemeContext** — light/dark toggle persisted to `localStorage`.
 

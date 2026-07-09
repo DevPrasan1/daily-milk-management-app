@@ -123,7 +123,7 @@ export default function MilkBookDetail() {
     })
 
     const monthName = selectedMonth.label
-    
+
     const recordRows = sortedRecords.map(r => {
       const rDate = r.date?.toDate ? r.date.toDate() : new Date(r.date)
       return `
@@ -596,7 +596,7 @@ export default function MilkBookDetail() {
                 <div key={type} className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
                   <div className="flex items-center gap-2">
                     <span className="text-base">{EMOJIS[type] || '🥛'}</span>
-                    <span className="font-semibold capitalize">{type}:</span>
+                    <span className="font-semibold capitalize">{t(`common.${type}`) || entry.cattleType}:</span>
                     <span className="text-gray-500 font-medium">{formatLitres(litres)}</span>
                   </div>
                   <div className="text-sm font-semibold text-gray-900 dark:text-white">

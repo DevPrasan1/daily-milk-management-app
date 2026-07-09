@@ -27,8 +27,10 @@ export default function BuyerProfile() {
   }
 
   async function handleLogout() {
-    await signOut(auth)
-    navigate('/')
+    if (window.confirm(t('common.logoutConfirm'))) {
+      await signOut(auth)
+      navigate('/')
+    }
   }
 
   return (

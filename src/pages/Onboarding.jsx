@@ -15,6 +15,7 @@ import Input from '@/components/ui/Input'
 import { Milk, MapPin, Check, AlertCircle } from 'lucide-react'
 import { linkPendingMilkbooks } from '@/services/milkbook.service'
 import { geohashForLocation } from 'geofire-common'
+import { setPrice, getGlobalPriceId } from '@/services/seller.service'
 
 
 export default function Onboarding() {
@@ -28,11 +29,23 @@ export default function Onboarding() {
   const isHindi = i18n.language === 'hi'
 
   const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [about, setAbout] = useState('')
   const [selectedCattle, setSelectedCattle] = useState([])
+  const [cowPrice, setCowPrice] = useState('')
+  const [bufPrice, setBufPrice] = useState('')
+  const [goatPrice, setGoatPrice] = useState('')
+  const [camelPrice, setCamelPrice] = useState('')
   const [openToSell, setOpenToSell] = useState(true)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      const rawPhone = userProfile?.phone || user?.phoneNumber || ''
+      setPhone(rawPhone.replace(/^\+91/, ''))
+    }
+  }, [user, userProfile])
 
   useEffect(() => {
     if (authLoading) return
@@ -56,9 +69,27 @@ export default function Onboarding() {
     const nameErr = validateName(name)
     if (nameErr) errs.name = nameErr
 
+    if (!phone.trim()) {
+      errs.phone = t('onboarding.phoneMandatory')
+    } else if (phone.replace(/\D/g, '').length !== 10) {
+      errs.phone = t('onboarding.phoneInvalid')
+    }
+
     if (isSeller) {
       if (selectedCattle.length === 0) {
         errs.cattle = t('onboarding.selectCattle')
+      }
+      if (selectedCattle.includes('cow') && (!cowPrice || parseFloat(cowPrice) <= 0)) {
+        errs.cowPrice = 'Enter a valid price'
+      }
+      if (selectedCattle.includes('buffalo') && (!bufPrice || parseFloat(bufPrice) <= 0)) {
+        errs.bufPrice = 'Enter a valid price'
+      }
+      if (selectedCattle.includes('goat') && (!goatPrice || parseFloat(goatPrice) <= 0)) {
+        errs.goatPrice = 'Enter a valid price'
+      }
+      if (selectedCattle.includes('camel') && (!camelPrice || parseFloat(camelPrice) <= 0)) {
+        errs.camelPrice = 'Enter a valid price'
       }
       if (openToSell && !coords) {
         errs.location = t('onboarding.locationMandatory')
@@ -75,9 +106,11 @@ export default function Onboarding() {
     }
     setLoading(true)
     try {
+      const fullPhone = `+91${phone.replace(/\D/g, '')}`
       const updateData = {
         name: name.trim(),
         about: about.trim(),
+        phone: fullPhone,
       }
 
       if (isSeller) {
@@ -106,10 +139,24 @@ export default function Onboarding() {
           hasGoat: selectedCattle.includes('goat'),
           hasCamel: selectedCattle.includes('camel'),
         }, { merge: true })
+
+        // Save prices
+        if (selectedCattle.includes('cow') && cowPrice) {
+          await setPrice(user.uid, getGlobalPriceId('cow'), { buyerId: null, cattleType: 'cow', pricePerLitre: parseFloat(cowPrice) })
+        }
+        if (selectedCattle.includes('buffalo') && bufPrice) {
+          await setPrice(user.uid, getGlobalPriceId('buffalo'), { buyerId: null, cattleType: 'buffalo', pricePerLitre: parseFloat(bufPrice) })
+        }
+        if (selectedCattle.includes('goat') && goatPrice) {
+          await setPrice(user.uid, getGlobalPriceId('goat'), { buyerId: null, cattleType: 'goat', pricePerLitre: parseFloat(goatPrice) })
+        }
+        if (selectedCattle.includes('camel') && camelPrice) {
+          await setPrice(user.uid, getGlobalPriceId('camel'), { buyerId: null, cattleType: 'camel', pricePerLitre: parseFloat(camelPrice) })
+        }
       }
 
       try {
-        await linkPendingMilkbooks(user.uid, user.phoneNumber)
+        await linkPendingMilkbooks(user.uid, fullPhone)
       } catch (err) {
         console.error('Error linking pending books:', err)
       }
@@ -135,15 +182,21 @@ export default function Onboarding() {
           {t('onboarding.title')}
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-          {userProfile?.phone || user?.phoneNumber}
+          {user?.email || user?.phoneNumber}
         </p>
 
         <div className="flex flex-col gap-5 flex-1">
           <Input
             label={t('onboarding.phoneLabel')}
-            value={userProfile?.phone || user?.phoneNumber || ''}
-            disabled
-            className="bg-gray-50 dark:bg-gray-800/50 cursor-not-allowed opacity-75"
+            value={phone}
+            onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
+            disabled={!!user?.phoneNumber}
+            prefix="+91"
+            maxLength={10}
+            inputMode="numeric"
+            placeholder={t('onboarding.phonePlaceholder')}
+            error={errors.phone}
+            className={user?.phoneNumber ? 'bg-gray-50 dark:bg-gray-800/50 cursor-not-allowed opacity-75' : ''}
           />
 
           <Input
@@ -155,7 +208,7 @@ export default function Onboarding() {
           />
 
           <Input
-            label={t('common.note')}
+            label={t('onboarding.aboutLabel')}
             placeholder={t('onboarding.aboutPlaceholder')}
             value={about}
             onChange={e => setAbout(e.target.value)}
@@ -200,6 +253,68 @@ export default function Onboarding() {
                   </p>
                 )}
               </div>
+
+              {selectedCattle.length > 0 && (
+                <div className="flex flex-col gap-3 mt-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('onboarding.cattleSection')}
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {selectedCattle.includes('cow') && (
+                      <Input
+                        label={`🐄 ${t('onboarding.cow')} (₹/L)`}
+                        type="number"
+                        inputMode="decimal"
+                        value={cowPrice}
+                        onChange={e => {
+                          setCowPrice(e.target.value)
+                          setErrors(prev => ({ ...prev, cowPrice: null }))
+                        }}
+                        error={errors.cowPrice}
+                      />
+                    )}
+                    {selectedCattle.includes('buffalo') && (
+                      <Input
+                        label={`🐃 ${t('onboarding.buffalo')} (₹/L)`}
+                        type="number"
+                        inputMode="decimal"
+                        value={bufPrice}
+                        onChange={e => {
+                          setBufPrice(e.target.value)
+                          setErrors(prev => ({ ...prev, bufPrice: null }))
+                        }}
+                        error={errors.bufPrice}
+                      />
+                    )}
+                    {selectedCattle.includes('goat') && (
+                      <Input
+                        label={`🐐 ${t('onboarding.goat')} (₹/L)`}
+                        type="number"
+                        inputMode="decimal"
+                        value={goatPrice}
+                        onChange={e => {
+                          setGoatPrice(e.target.value)
+                          setErrors(prev => ({ ...prev, goatPrice: null }))
+                        }}
+                        error={errors.goatPrice}
+                      />
+                    )}
+                    {selectedCattle.includes('camel') && (
+                      <Input
+                        label={`🐪 ${t('onboarding.camel')} (₹/L)`}
+                        type="number"
+                        inputMode="decimal"
+                        value={camelPrice}
+                        onChange={e => {
+                          setCamelPrice(e.target.value)
+                          setErrors(prev => ({ ...prev, camelPrice: null }))
+                        }}
+                        error={errors.camelPrice}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2 mt-2">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -285,7 +400,7 @@ export default function Onboarding() {
                           <AlertCircle className="w-3.5 h-3.5" />
                           {locError}
                         </p>
-                        <button
+                        {/* <button
                           type="button"
                           onClick={() => {
                             setCoords({ lat: 28.6139, lng: 77.2090 })
@@ -294,7 +409,7 @@ export default function Onboarding() {
                           className="text-xs text-[#1D9E75] font-semibold hover:underline self-start min-h-[32px] px-1"
                         >
                           {t('buyer.nearby.testModeLocation')}
-                        </button>
+                        </button> */}
                       </div>
                     )}
                     {errors.location && (

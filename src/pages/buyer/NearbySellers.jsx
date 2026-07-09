@@ -151,12 +151,12 @@ export default function NearbySellers() {
             {locError && (
               <div className="mt-4 flex flex-col items-center gap-2">
                 <p className="text-xs text-red-500">{locError}</p>
-                <button
+                {/* <button
                   onClick={() => setCoords({ lat: 28.6139, lng: 77.2090 })}
                   className="text-xs text-[#1D9E75] font-semibold hover:underline min-h-[32px] px-3 mt-1"
                 >
                   {t('buyer.nearby.testModeLocation')}
-                </button>
+                </button> */}
               </div>
             )}
           </div>
@@ -192,8 +192,8 @@ export default function NearbySellers() {
                 type="button"
                 onClick={() => setActiveTab('map')}
                 className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${activeTab === 'map'
-                    ? 'bg-white dark:bg-gray-700 text-[#1D9E75] shadow-xs font-bold'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'bg-white dark:bg-gray-700 text-[#1D9E75] shadow-xs font-bold'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
               >
                 {isHindi ? 'मैप व्यू' : 'Map View'}
@@ -202,8 +202,8 @@ export default function NearbySellers() {
                 type="button"
                 onClick={() => setActiveTab('list')}
                 className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${activeTab === 'list'
-                    ? 'bg-white dark:bg-gray-700 text-[#1D9E75] shadow-xs font-bold'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'bg-white dark:bg-gray-700 text-[#1D9E75] shadow-xs font-bold'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                   }`}
               >
                 {isHindi ? 'लिस्ट व्यू' : 'List View'}

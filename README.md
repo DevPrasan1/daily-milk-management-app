@@ -17,10 +17,10 @@ A modern, responsive Progressive Web Application (PWA) designed for dairy seller
 ## User Flows
 
 ### Seller / Buyer role-specific discovery flow
-1. **Login** (`/login`) — OTP via Firebase Phone Auth.
+1. **Login** (`/login`) — Single-click Google Sign-in popup or Email Magic Link passwordless authorization.
 2. **Role select** (`/role-select`) — writes `role: 'seller' | 'buyer'` to `users/{uid}`.
-3. **Onboarding** (`/onboarding`) — sets profile `name` and `about`. For sellers who want to sell milk and be searchable by nearby buyers, providing a GPS location is **mandatory** (saves `gpsLocation` and `geohash` coordinates).
-4. **Nearby sellers** (`/buyer/nearby`) — To view nearby sellers on the Leaflet map, the user **must** share their current location (either natively or via test fallback) to calculate the search center and query matching sellers within a 10km radius.
+3. **Onboarding** (`/onboarding`) — sets profile `name` and `about`, and collects the user's **Mobile Number** manually. For sellers, also collects default milk prices per cattle type and optionally their GPS coordinates (providing location coordinates is **mandatory** only if `openToSell` is enabled).
+4. **Nearby sellers** (`/buyer/nearby`) — To view nearby sellers on the Leaflet map, the user **must** share their current location (either natively or via Noida/Delhi test fallback) to calculate the search center and query matching sellers within a 10km radius.
 
 ### MilkBook Shared Ledger flow
 1. **Starting a MilkBook** — The creator inputs the partner's name, phone, starting date, quantities, and cattle pricing.

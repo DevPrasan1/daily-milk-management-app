@@ -108,7 +108,7 @@ export default function RecordCard({ record, onDelete }) {
                 {EMOJIS[entry.cattleType] || '🥛'}
               </span>
               <span className="font-medium capitalize w-14 text-gray-500 dark:text-gray-400">
-                {entry.cattleType}:
+                {t(`common.${entry.cattleType}`) || entry.cattleType}:
               </span>
               <span>☀️ {formatLitres(entry.morning)}</span>
               <span className="text-gray-300 dark:text-gray-600">•</span>

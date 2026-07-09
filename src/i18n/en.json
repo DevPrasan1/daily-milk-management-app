@@ -32,7 +32,8 @@
     "retry": "Retry",
     "noData": "No data yet",
     "search": "Search",
-    "recordExistsError": "Record for this date and cattle type already exists"
+    "recordExistsError": "Record for this date and cattle type already exists",
+    "logoutConfirm": "Are you sure you want to log out?"
   },
   "landing": {
     "tagline": "Apna dudh, apna hisaab",
@@ -49,19 +50,14 @@
     "alreadyAccount": "Already have an account? Login"
   },
   "login": {
-    "title": "Login with Phone",
-    "phonePlaceholder": "Enter 10-digit mobile number",
-    "sendOtp": "Send OTP",
-    "otpSent": "OTP sent to +91",
-    "otpPlaceholder": "Enter 6-digit OTP",
-    "verifyOtp": "Verify & Login",
-    "resend": "Resend OTP",
-    "resendIn": "Resend in",
-    "seconds": "seconds",
-    "changeNumber": "Change Number",
-    "invalidOtp": "Invalid OTP. Please try again.",
-    "otpInstruction": "We'll send a one-time password to verify your number",
-    "otpLabel": "OTP"
+    "title": "Welcome to MilkBook",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email address",
+    "sendMagicLink": "Send login link on email",
+    "googleLogin": "Continue with Google",
+    "magicLinkSent": "We sent a sign-in link to your email. Click the link in your email to log in.",
+    "invalidEmail": "Please enter a valid email address",
+    "or": "OR"
   },
   "roleSelect": {
     "title": "Who are you?",
@@ -74,7 +70,12 @@
   },
   "onboarding": {
     "title": "Setup Your Profile",
+    "phoneLabel": "Mobile Number",
+    "phonePlaceholder": "Enter 10-digit mobile number",
+    "phoneMandatory": "Mobile number is required",
+    "phoneInvalid": "Please enter a valid 10-digit mobile number",
     "namePlaceholder": "Your full name",
+    "aboutLabel": "Tell me more about you",
     "aboutPlaceholder": "Tell buyers about your dairy (optional)",
     "homeDelivery": "I offer home delivery",
     "continueBtn": "Continue",
@@ -258,5 +259,11 @@
     "nearby": "Nearby",
     "settings": "Settings",
     "profile": "Profile"
+  },
+  "location": {
+    "errDenied": "Location permission denied. Please enable it in browser settings.",
+    "errUnavailable": "Unable to find your location. Please check if device GPS/location services are enabled.",
+    "errTimeout": "Location request timed out. Please try again.",
+    "errUnknown": "Failed to get location. Please try again."
   }
 }
