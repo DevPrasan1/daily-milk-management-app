@@ -10,6 +10,7 @@ import { useLocation } from '@/hooks/useLocation'
 import { useSellerPrices } from '@/hooks/useSeller'
 import { setPrice, getGlobalPriceId } from '@/services/seller.service'
 import { useState, useEffect } from 'react'
+import { geohashForLocation } from 'geofire-common'
 import AppShell from '@/components/layout/AppShell'
 import TopBar from '@/components/layout/TopBar'
 import PageWrapper from '@/components/layout/PageWrapper'
@@ -103,6 +104,7 @@ export default function SellerSettings() {
     setSavingProfile(true)
     try {
       const geoPoint = new GeoPoint(customCoords.lat, customCoords.lng)
+      const hash = geohashForLocation([customCoords.lat, customCoords.lng])
       const updateData = {
         name: name.trim(),
         about: about.trim(),
@@ -112,6 +114,7 @@ export default function SellerSettings() {
         hasGoat: selectedCattle.includes('goat'),
         hasCamel: selectedCattle.includes('camel'),
         gpsLocation: geoPoint,
+        geohash: hash,
       }
 
       await updateDoc(doc(db, 'users', user.uid), updateData)
@@ -122,6 +125,7 @@ export default function SellerSettings() {
         hasGoat: selectedCattle.includes('goat'),
         hasCamel: selectedCattle.includes('camel'),
         gpsLocation: geoPoint,
+        geohash: hash,
       }, { merge: true })
 
       toast('Profile updated successfully', 'success')

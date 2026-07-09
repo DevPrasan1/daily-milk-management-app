@@ -5,22 +5,6 @@ export function useLocation() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const fetchIPLocation = useCallback(async () => {
-    try {
-      const res = await fetch('https://ipapi.co/json/')
-      if (res.ok) {
-        const data = await res.json()
-        if (data.latitude && data.longitude) {
-          setCoords({ lat: data.latitude, lng: data.longitude })
-          return true
-        }
-      }
-    } catch (e) {
-      console.error('IP Geolocation failed:', e)
-    }
-    return false
-  }, [])
-
   const getLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported on this device')
@@ -33,17 +17,13 @@ export function useLocation() {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         setLoading(false)
       },
-      async err => {
-        console.warn('Native geolocation failed, trying IP fallback...', err)
-        const success = await fetchIPLocation()
-        if (!success) {
-          setError(err.message)
-        }
+      err => {
+        setError(err.message)
         setLoading(false)
       },
       { timeout: 8000, maximumAge: 60000 }
     )
-  }, [fetchIPLocation])
+  }, [])
 
   return { coords, setCoords, loading, error, getLocation }
 }

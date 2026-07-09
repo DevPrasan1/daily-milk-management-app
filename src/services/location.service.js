@@ -1,26 +1,71 @@
-import { collection, getDocs, doc, updateDoc, GeoPoint, query, where } from 'firebase/firestore'
+import { collection, getDocs, doc, updateDoc, GeoPoint, query, where, orderBy, startAt, endAt } from 'firebase/firestore'
 import { db } from '@/config/firebase'
-import { distanceKm } from '@/hooks/useLocation'
+import { geohashForLocation, geohashQueryBounds, distanceBetween } from 'geofire-common'
 
 export async function saveUserLocation(userId, lat, lng) {
+  const hash = geohashForLocation([lat, lng])
   await updateDoc(doc(db, 'users', userId), {
     gpsLocation: new GeoPoint(lat, lng),
+    geohash: hash
   })
+  
+  try {
+    await updateDoc(doc(db, 'sellers', userId), {
+      gpsLocation: new GeoPoint(lat, lng),
+      geohash: hash
+    })
+  } catch (e) {
+    // Sellers profile document might not exist yet if the user is onboarding
+  }
 }
 
 export async function getNearbySellers(lat, lng, radiusKm = 10) {
-  // Fetch all users with role=seller who have a GPS location set.
-  // Client-side distance filter is fine for village-scale (dozens of sellers max).
-  const q = query(collection(db, 'users'), where('role', '==', 'seller'))
-  const snap = await getDocs(q)
+  const center = [lat, lng]
+  const radiusInM = radiusKm * 1000
 
-  return snap.docs
-    .map(d => ({ id: d.id, ...d.data() }))
-    .filter(u => u.gpsLocation)
-    .map(u => ({
-      ...u,
-      distance: distanceKm(lat, lng, u.gpsLocation.latitude, u.gpsLocation.longitude),
-    }))
-    .filter(u => u.distance <= radiusKm)
+  // Calculate geohash query bounds
+  const bounds = geohashQueryBounds(center, radiusInM)
+  const promises = []
+
+  for (const b of bounds) {
+    const q = query(
+      collection(db, 'users'),
+      orderBy('geohash'),
+      startAt(b[0]),
+      endAt(b[1])
+    )
+    promises.push(getDocs(q))
+  }
+
+  const snapshots = await Promise.all(promises)
+  const matchingSellers = []
+
+  for (const snap of snapshots) {
+    for (const doc of snap.docs) {
+      const data = doc.data()
+      // Filter role client-side to avoid needing a Firestore composite index
+      if (data.role !== 'seller') continue
+
+      const latVal = data.gpsLocation?.latitude
+      const lngVal = data.gpsLocation?.longitude
+      
+      if (latVal !== undefined && lngVal !== undefined) {
+        const distance = distanceBetween([latVal, lngVal], center)
+        if (distance <= radiusKm) {
+          matchingSellers.push({
+            id: doc.id,
+            ...data,
+            distance
+          })
+        }
+      }
+    }
+  }
+
+  // Deduplicate results
+  const uniqueSellers = new Map()
+  matchingSellers.forEach(s => uniqueSellers.set(s.id, s))
+
+  return Array.from(uniqueSellers.values())
     .sort((a, b) => a.distance - b.distance)
 }

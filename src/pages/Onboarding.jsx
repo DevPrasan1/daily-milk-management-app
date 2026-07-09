@@ -14,6 +14,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Milk, MapPin, Check, AlertCircle } from 'lucide-react'
 import { linkPendingMilkbooks } from '@/services/milkbook.service'
+import { geohashForLocation } from 'geofire-common'
 
 
 export default function Onboarding() {
@@ -80,7 +81,9 @@ export default function Onboarding() {
       }
 
       if (isSeller) {
+        const hash = geohashForLocation([coords.lat, coords.lng])
         updateData.gpsLocation = new GeoPoint(coords.lat, coords.lng)
+        updateData.geohash = hash
         updateData.openToSell = openToSell
         updateData.hasCow = selectedCattle.includes('cow')
         updateData.hasBuffalo = selectedCattle.includes('buffalo')
@@ -91,8 +94,10 @@ export default function Onboarding() {
       await updateDoc(doc(db, 'users', user.uid), updateData)
 
       if (isSeller) {
+        const hash = geohashForLocation([coords.lat, coords.lng])
         await setDoc(doc(db, 'sellers', user.uid), {
           gpsLocation: new GeoPoint(coords.lat, coords.lng),
+          geohash: hash,
           openToSell,
           hasCow: selectedCattle.includes('cow'),
           hasBuffalo: selectedCattle.includes('buffalo'),

@@ -54,8 +54,8 @@ All milk records and transaction histories are unified under the top-level `milk
 
 | Collection | Purpose |
 |---|---|
-| `users/{uid}` | Shared profile (role, name, phone, language) |
-| `sellers/{sellerId}` | Seller discovery config (openToSell, GPS location, cattle types) |
+| `users/{uid}` | Shared profile (role, name, phone, language, gpsLocation, geohash) |
+| `sellers/{sellerId}` | Seller discovery config (openToSell, GPS location, geohash, cattle types) |
 | `milkbooks/{bookId}` | Unified shared ledger metadata (creatorId, partnerId, phone, default quantities, prices) |
 | `milkbooks/{bookId}/records/{recordId}` | Daily morning/evening milk entries. IDs are deterministic (`{cattleType}_{YYYYMMDD}`) |
 | `milkbooks/{bookId}/payments/{paymentId}` | Payment ledger added by the book's creator |
@@ -69,7 +69,7 @@ All Firestore operations live in `src/services/`. Components never call Firestor
 - `seller.service.js` — seller profile and config management
 - `buyer.service.js` — buyer profile management
 - `billing.service.js` — bill summary calculation utilities
-- `location.service.js` — geolocation queries for map discovery
+- `location.service.js` — optimized nearby seller geohash range query using `geofire-common` with client-side role filtering.
 
 ### Auto-record system
 
@@ -81,6 +81,7 @@ Client-side auto-recording runs via the dashboard hooks for active milkbooks cre
 - `src/utils/validators.js` — `validatePhone`, `validateOtp`, `validateName`, `validateQuantity`, `validatePrice`
 - `src/utils/constants.js` — `ROLES`, `CATTLE_TYPES`, `CATTLE_OPTIONS`
 - `src/utils/dateUtils.js`, `src/utils/shareUtils.js`
+- `src/hooks/useLocation.js` — geolocation queries with manual Noida/Delhi coordinate override for test mode when device GPS fails.
 
 ### i18n
 

@@ -29,6 +29,8 @@ role: 'seller' | 'buyer'
 name: string
 phone: string
 about?: string
+gpsLocation?: GeoPoint
+geohash?: string
 createdAt: Timestamp
 ```
 
@@ -36,6 +38,7 @@ createdAt: Timestamp
 ```
 openToSell: boolean
 gpsLocation: GeoPoint
+geohash: string
 hasCow: boolean
 hasBuffalo: boolean
 hasGoat: boolean
@@ -100,7 +103,7 @@ All Firestore access goes through `src/services/`. Never call Firestore directly
 | `seller.service.js` | `getSellerProfile`, `updateSellerProfile` |
 | `buyer.service.js` | `getBuyerProfile` |
 | `billing.service.js` | `calcBillSummary(records, prices, payments)` |
-| `location.service.js` | Geolocation maps and coordinates utilities |
+| `location.service.js` | `saveUserLocation`, `getNearbySellers` (optimized using Geohash ranges with client-side role filtering) |
 
 ---
 
