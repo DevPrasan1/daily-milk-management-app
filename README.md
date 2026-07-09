@@ -1,44 +1,73 @@
-# MilkBook — Technical Documentation
+# MilkBook — *Apna dudh, apna hisaab*
 
-*Apna dudh, apna hisaab.* A PWA for milk delivery tracking between dairy sellers and their buyers.
+A modern, responsive Progressive Web Application (PWA) designed for dairy sellers and buyers to log milk deliveries, track payment records, and maintain billing transparency.
 
-<p align="center">
-  <img src="public/login.png" width="45%" alt="Login" />
-  <img src="public/dashboard.png" width="45%" alt="Dashboard" />
-</p>
+---
+
+## Key Features
+
+1. **Shared Peer-to-Peer Ledgers**: Anyone (buyer or seller) can create a **MilkBook** ledger. If the partner's phone is added, the book is automatically linked to their profile, granting them read-only view access.
+2. **Geohash Spatial Queries**: Discover nearby sellers on a Leaflet map. Geolocation queries are optimized using bounding-box geohashes (`geofire-common`) to filter coordinates in Firestore efficiently without downloading the whole database.
+3. **Bilingual Support (i18n)**: Fully translated interfaces in English and Hindi, stored client-side and persistent.
+4. **Offline GPS Fallback**: Seamless fallback to IP-based Geolocation and manual Noida/Delhi coordinate overrides when system GPS permissions are disabled.
+5. **PDF Receipts & Downloads**: Generate and download monthly billing statements complete with animal-type breakdowns, total deliveries breakdown, and daily comments.
 
 ---
 
 ## User Flows
 
-### Seller flow
-1. **Login** (`/login`) — OTP via Firebase Phone Auth
-2. **Role select** (`/role-select`) — writes `role: 'seller'` to `users/{uid}` and creates `sellers/{uid}` doc
-3. **Onboarding** (`/onboarding`) — sets `name`, `about`, `homeDelivery`; optionally sets global prices per cattle type in `sellerPrices/{uid}/prices/global_{type}`
-4. **Dashboard** (`/seller`) — daily summary: total litres today, pending payments, buyer count
-5. **Daily entry** (`/seller/entry`) — select buyer → enter morning/evening quantities per cattle type → saves to `records/{sellerId}/entries/{recordId}`
-6. **Buyer management** (`/seller/buyers`) — add/edit/deactivate buyers; each buyer lives in `sellerBuyers/{sellerId}/members/{buyerId}`
-7. **Billing** (`/seller/buyers/:buyerId`) — view monthly bill, record payments, share via WhatsApp
+### Seller / Buyer role-specific discovery flow
+1. **Login** (`/login`) — OTP via Firebase Phone Auth.
+2. **Role select** (`/role-select`) — writes `role: 'seller' | 'buyer'` to `users/{uid}`.
+3. **Onboarding** (`/onboarding`) — sets profile `name`, `about`, and location config.
+4. **Nearby sellers** (`/buyer/nearby`) — search and link with dairy sellers within a 10km radius.
 
-### Buyer flow
-1. Login → role select (`role: 'buyer'`) → onboarding
-2. **Dashboard** (`/buyer`) — summary across all linked sellers
-3. **My records** (`/buyer/records`) — view records per seller per month; can also add self-entries to `buyerSelfRecords/{buyerId}/entries/`
-4. **Nearby sellers** (`/buyer/nearby`) — geolocation-based seller discovery; sends `linkRequests` doc
+### MilkBook Shared Ledger flow
+1. **Starting a MilkBook** — The creator inputs the partner's name, phone, starting date, quantities, and cattle pricing.
+2. **Auto-Linking** — If the partner registers with that phone number, the book is automatically linked to their account.
+3. **Daily Entries** — The creator logs morning/evening milk quantities.
+4. **Billing & Payments** — The creator records payments. Balance dues and transaction logs are synced automatically in real-time.
+5. **Viewer access** — The partner views the ledger on their dashboard under *"Shared Books"* in read-only mode.
 
 ---
 
-## Environment Variables
+## Technical Stack & Architecture
 
-All Firebase config via `VITE_FIREBASE_*` in `.env`:
+- **Frontend**: React, React Router DOM, Tailwind CSS (v4), Lucide React.
+- **Backend & DB**: Firebase Auth & Cloud Firestore.
+- **Mapping**: Leaflet, React-Leaflet, OpenStreetMap.
+- **Geohashing**: `geofire-common` library.
+- **Localization**: `react-i18next`.
 
-```
-VITE_FIREBASE_API_KEY
-VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_PROJECT_ID
-VITE_FIREBASE_STORAGE_BUCKET
-VITE_FIREBASE_MESSAGING_SENDER_ID
-VITE_FIREBASE_APP_ID
+---
+
+## Environment Configuration
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 ```
 
 ---
+
+## Development Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Start Vite local development server
+npm run dev
+
+# Compile production bundle (dist/)
+npm run build
+
+# Preview the compiled production build
+npm run preview
+```
