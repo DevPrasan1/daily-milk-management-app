@@ -33,6 +33,21 @@ export default function NearbySellers() {
   const mapDivRef = useRef(null)
   const isHindi = i18n.language === 'hi'
 
+  // Pre-populate coordinates from user profile if available
+  useEffect(() => {
+    if (userProfile?.gpsLocation && !coords) {
+      setCoords({
+        lat: userProfile.gpsLocation.latitude,
+        lng: userProfile.gpsLocation.longitude
+      })
+    }
+  }, [userProfile, coords, setCoords])
+
+  // Auto-fetch location on mount
+  useEffect(() => {
+    getLocation()
+  }, [getLocation])
+
   useEffect(() => {
     if (activeTab === 'map' && mapRef.current) {
       setTimeout(() => {

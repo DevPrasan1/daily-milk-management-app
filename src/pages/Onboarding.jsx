@@ -48,6 +48,12 @@ export default function Onboarding() {
   }, [user, userProfile])
 
   useEffect(() => {
+    if (isSeller) {
+      getLocation()
+    }
+  }, [isSeller, getLocation])
+
+  useEffect(() => {
     if (authLoading) return
     if (!user) {
       navigate('/login', { replace: true })
