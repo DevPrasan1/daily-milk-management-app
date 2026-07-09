@@ -87,10 +87,10 @@ export default function SellerDashboard() {
     { icon: Users, label: t('seller.dashboard.totalBuyers'), value: String(activeBuyers.length) },
     { icon: Milk, label: t('seller.dashboard.todayDelivery'), value: `${totalDailyLitres.toFixed(1)}L` },
     { icon: IndianRupee, label: t('seller.dashboard.pendingPayments') || 'Pending Payments', value: formatAmount(totalDue) },
-    { icon: ClipboardList, label: 'Shared Books', value: String(sharedBooks.length) },
+    { icon: ClipboardList, label: t('milkbook.sharedWithMe'), value: String(sharedBooks.length) },
   ]
 
-  const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
+  const greeting = t('seller.dashboard.greeting')
 
   return (
     <AppShell>
@@ -121,18 +121,18 @@ export default function SellerDashboard() {
 
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            My MilkBooks (I Manage)
+            {t('milkbook.myManaged')}
           </p>
           <Button size="sm" onClick={() => navigate('/milkbooks/add')}>
             <Plus className="w-4 h-4" />
-            Start Book
+            {t('milkbook.addTitle')}
           </Button>
         </div>
 
         {loading ? null : myBooks.length === 0 ? (
           <Card className="flex flex-col items-center py-8 text-center mb-6">
             <Users className="w-8 h-8 text-gray-300 mb-2" />
-            <p className="text-sm text-gray-400">No managed books yet</p>
+            <p className="text-sm text-gray-400">{t('milkbook.noManaged')}</p>
           </Card>
         ) : (
           <div className="flex flex-col gap-2 mb-6">
@@ -146,7 +146,7 @@ export default function SellerDashboard() {
           <>
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                Shared Books (View Only)
+                {t('milkbook.sharedWithMe')}
               </p>
             </div>
             <div className="flex flex-col gap-2">

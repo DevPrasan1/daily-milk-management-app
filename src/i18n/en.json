@@ -58,7 +58,10 @@
     "resend": "Resend OTP",
     "resendIn": "Resend in",
     "seconds": "seconds",
-    "changeNumber": "Change Number"
+    "changeNumber": "Change Number",
+    "invalidOtp": "Invalid OTP. Please try again.",
+    "otpInstruction": "We'll send a one-time password to verify your number",
+    "otpLabel": "OTP"
   },
   "roleSelect": {
     "title": "Who are you?",
@@ -150,7 +153,9 @@
       "autoModeDesc": "Automatically create daily records at 8am and 8pm",
       "language": "Language",
       "theme": "Dark Mode",
-      "logout": "Logout"
+      "logout": "Logout",
+      "savePrices": "Save Prices",
+      "selectCattlePrompt": "Select cattle type in profile to configure pricing"
     }
   },
   "buyer": {
@@ -172,7 +177,11 @@
       "findingSellers": "Finding sellers near you...",
       "noSellers": "No sellers found nearby",
       "distance": "away",
-      "requestLink": "Request to Link"
+      "requestLink": "Request to Link",
+      "findSellersHeading": "Find sellers near you",
+      "locationAccessDesc": "Allow location access to discover milk sellers in your area",
+      "allowLocationBtn": "Allow Location",
+      "gettingLocation": "Getting your location..."
     }
   },
   "panchang": {
@@ -206,5 +215,47 @@
     "chaturdashi": "Chaturdashi",
     "purnima": "Purnima",
     "amavasya": "Amavasya"
+  },
+  "milkbook": {
+    "addTitle": "Start MilkBook",
+    "editTitle": "Edit MilkBook",
+    "partnerName": "Partner Name",
+    "partnerPhone": "Partner Phone Number (optional)",
+    "partnerPhoneDesc": "If they join the platform later, the book will be shared automatically.",
+    "startDate": "Start Date",
+    "defaultQuantities": "Default Daily Quantities (Litres)",
+    "defaultPrices": "Cattle Prices (₹ / Litre)",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "morning": "Morning",
+    "evening": "Evening",
+    "save": "Save MilkBook",
+    "detailsTitle": "MilkBook Details",
+    "deleteConfirm": "Delete this MilkBook permanently? All daily entries and payments will also be deleted.",
+    "myManaged": "My Managed Books",
+    "sharedWithMe": "Shared with Me",
+    "noManaged": "No managed books yet",
+    "noShared": "No shared books yet",
+    "tabEntries": "Entries",
+    "tabPayments": "Payments",
+    "dailyRecords": "Daily Milk Entries",
+    "paymentsLog": "Payments Log",
+    "addEntry": "Add Entry",
+    "recordPayment": "Record Payment",
+    "noRecords": "No records logged for this month.",
+    "noPayments": "No payments recorded for this month.",
+    "billingSummary": "Billing Summary",
+    "deliveriesBreakdown": "Deliveries Breakdown",
+    "totalVolume": "Total Volume",
+    "totalAmount": "Total Amount",
+    "totalPaid": "Total Paid",
+    "balanceDue": "Balance Due"
+  },
+  "nav": {
+    "home": "Home",
+    "nearby": "Nearby",
+    "settings": "Settings",
+    "profile": "Profile"
   }
 }

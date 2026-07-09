@@ -96,7 +96,7 @@ export default function Login() {
       await confirmationRef.current.confirm(otp)
       // onAuthStateChanged in AuthContext will pick up the new user
     } catch {
-      setOtpError('Invalid OTP. Please try again.')
+      setOtpError(t('login.invalidOtp'))
     } finally {
       setLoading(false)
     }
@@ -129,7 +129,7 @@ export default function Login() {
           {step === 'phone' ? (
             <>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-                We'll send a one-time password to verify your number
+                {t('login.otpInstruction')}
               </p>
               <Input
                 label={t('common.phone')}
@@ -157,7 +157,7 @@ export default function Login() {
                 {t('login.otpSent')} +91 {phone}
               </p>
               <Input
-                label="OTP"
+                label={t('login.otpLabel')}
                 type="tel"
                 inputMode="numeric"
                 maxLength={6}

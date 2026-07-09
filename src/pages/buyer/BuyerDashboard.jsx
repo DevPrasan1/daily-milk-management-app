@@ -95,9 +95,9 @@ export default function BuyerDashboard() {
 
         <div className="grid grid-cols-3 gap-3 mb-5">
           {[
-            { icon: ClipboardList, label: 'Managed Books', value: String(myBooks.length) },
-            { icon: Milk, label: 'Shared Books', value: String(sharedBooks.length) },
-            { icon: IndianRupee, label: 'Pending Dues', value: formatAmount(totalDue) },
+            { icon: ClipboardList, label: t('milkbook.myManaged'), value: String(myBooks.length) },
+            { icon: Milk, label: t('milkbook.sharedWithMe'), value: String(sharedBooks.length) },
+            { icon: IndianRupee, label: t('buyer.dashboard.amountDue') || 'Pending Dues', value: formatAmount(totalDue) },
           ].map(({ icon: Icon, label, value }) => (
             <Card key={label} className="flex flex-col gap-2">
               <div className="w-8 h-8 rounded-xl bg-[#1D9E75]/10 flex items-center justify-center">
@@ -111,18 +111,18 @@ export default function BuyerDashboard() {
 
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            Shared with Me (View Only)
+            {t('milkbook.sharedWithMe')}
           </p>
           <Button size="sm" variant="ghost" className="text-xs" onClick={() => navigate('/buyer/nearby')}>
             <MapPin className="w-3.5 h-3.5 mr-1" />
-            Find Sellers
+            {t('buyer.nearby.title') || 'Find Sellers'}
           </Button>
         </div>
 
         {loading ? null : sharedBooks.length === 0 ? (
           <Card className="flex flex-col items-center py-8 text-center mb-6">
             <Store className="w-8 h-8 text-gray-300 mb-2" />
-            <p className="text-sm text-gray-400">No shared books yet</p>
+            <p className="text-sm text-gray-400">{t('milkbook.noShared')}</p>
           </Card>
         ) : (
           <div className="flex flex-col gap-2 mb-6">
@@ -134,18 +134,18 @@ export default function BuyerDashboard() {
 
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            My MilkBooks (I Manage)
+            {t('milkbook.myManaged')}
           </p>
           <Button size="sm" onClick={() => navigate('/milkbooks/add')}>
             <Plus className="w-4 h-4" />
-            Start Book
+            {t('milkbook.addTitle')}
           </Button>
         </div>
 
         {loading ? null : myBooks.length === 0 ? (
           <Card className="flex flex-col items-center py-8 text-center">
             <ClipboardList className="w-8 h-8 text-gray-300 mb-2" />
-            <p className="text-sm text-gray-400">No managed books yet</p>
+            <p className="text-sm text-gray-400">{t('milkbook.noManaged')}</p>
           </Card>
         ) : (
           <div className="flex flex-col gap-2">

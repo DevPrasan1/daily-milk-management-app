@@ -139,14 +139,14 @@ export default function NearbySellers() {
               <Navigation className="w-8 h-8 text-[#1D9E75]" />
             </div>
             <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 mb-2">
-              Find sellers near you
+              {t('buyer.nearby.findSellersHeading')}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs">
-              Allow location access to discover milk sellers in your area
+              {t('buyer.nearby.locationAccessDesc')}
             </p>
             <Button onClick={getLocation}>
               <MapPin className="w-4 h-4" />
-              Allow Location
+              {t('buyer.nearby.allowLocationBtn')}
             </Button>
             {locError && (
               <p className="text-xs text-red-500 mt-3">{locError}</p>
@@ -158,7 +158,7 @@ export default function NearbySellers() {
           <div className="flex flex-col items-center py-16 gap-3">
             <Spinner size="lg" />
             <p className="text-sm text-gray-500">
-              {locLoading ? 'Getting your location...' : t('buyer.nearby.findingSellers')}
+              {locLoading ? t('buyer.nearby.gettingLocation') : t('buyer.nearby.findingSellers')}
             </p>
           </div>
         )}

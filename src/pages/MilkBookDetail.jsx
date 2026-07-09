@@ -446,7 +446,7 @@ export default function MilkBookDetail() {
     setDeletingBook(true)
     try {
       await deleteMilkBook(milkbookId)
-      toast('MilkBook deleted', 'success')
+      toast(t('common.done'), 'success')
       navigate(-1)
     } catch {
       toast(t('common.error'), 'error')
@@ -458,7 +458,7 @@ export default function MilkBookDetail() {
   return (
     <AppShell>
       <TopBar
-        title={book?.displayName || book?.name || 'MilkBook Details'}
+        title={book?.displayName || book?.name || t('milkbook.detailsTitle')}
         action={
           <div className="flex gap-1">
             <button
@@ -492,7 +492,7 @@ export default function MilkBookDetail() {
       {showDeleteBook && (
         <div className="mx-4 mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-center justify-between gap-3">
           <p className="text-sm text-red-700 dark:text-red-300">
-            Delete this MilkBook permanently? All daily entries and payments will also be deleted.
+            {t('milkbook.deleteConfirm')}
           </p>
           <div className="flex gap-2 flex-shrink-0">
             <Button size="sm" variant="danger" loading={deletingBook} onClick={handleDeleteBook}>
@@ -530,13 +530,13 @@ export default function MilkBookDetail() {
             key={t_}
             onClick={() => setTab(t_)}
             className={clsx(
-              'flex-1 py-2 text-sm font-medium rounded-lg transition-colors capitalize',
+              'flex-1 py-2 text-sm font-medium rounded-lg transition-colors',
               tab === t_
                 ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
                 : 'text-gray-500 dark:text-gray-400'
             )}
           >
-            {t_ === 'records' ? 'Entries' : 'Payments'}
+            {t_ === 'records' ? t('milkbook.tabEntries') : t('milkbook.tabPayments')}
           </button>
         ))}
       </div>
@@ -551,13 +551,13 @@ export default function MilkBookDetail() {
               <div className="flex justify-end mb-3 px-4">
                 <Button size="sm" className="w-100" onClick={() => setShowAddEntry(true)}>
                   <Milk className="w-4 h-4" />
-                  Add Entry
+                  {t('milkbook.addEntry')}
                 </Button>
               </div>
             )}
             <div className="bg-white dark:bg-gray-800 rounded-2xl mx-4 border border-gray-100 dark:border-gray-700 overflow-hidden">
               {cattleRecords.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-10">No records for this month</p>
+                <p className="text-sm text-gray-400 text-center py-10">{t('buyer.records.noRecords')}</p>
               ) : (
                 cattleRecords.map(r => (
                   <RecordCard key={r.id} record={r} onDelete={isCreator ? handleDeleteRecord : null} />
@@ -584,9 +584,9 @@ export default function MilkBookDetail() {
       <div className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 px-4 py-3 shadow-lg">
         {/* Breakdown details */}
         <div className="space-y-2 mb-3 pb-3 border-b border-gray-50 dark:border-gray-700">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Rate & Deliveries Breakdown</p>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">{t('milkbook.deliveriesBreakdown')}</p>
           {activeCattleTypes.length === 0 ? (
-            <p className="text-xs text-gray-400">No milk entries recorded</p>
+            <p className="text-xs text-gray-400">{t('buyer.records.noRecords')}</p>
           ) : (
             activeCattleTypes.map(type => {
               const litres = records.filter(r => r.cattleType === type).reduce((sum, r) => sum + (r.total || 0), 0)

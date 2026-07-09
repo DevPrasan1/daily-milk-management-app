@@ -170,12 +170,12 @@ export default function AddEditMilkBook() {
 
   return (
     <AppShell>
-      <TopBar title={isEdit ? 'Edit MilkBook' : 'Start MilkBook'} />
+      <TopBar title={isEdit ? t('milkbook.editTitle') : t('milkbook.addTitle')} />
       <PageWrapper>
         <div className="flex flex-col gap-4">
           <Input
             label={t('common.name')}
-            placeholder="Partner's full name"
+            placeholder={t('milkbook.partnerName')}
             value={name}
             onChange={e => setName(e.target.value)}
             error={errors.name}
@@ -185,7 +185,7 @@ export default function AddEditMilkBook() {
             type="tel"
             inputMode="numeric"
             maxLength={10}
-            placeholder="10-digit mobile (optional)"
+            placeholder={t('milkbook.partnerPhone')}
             prefix="+91"
             value={phone}
             onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -267,7 +267,7 @@ export default function AddEditMilkBook() {
               </div>
 
               <Input
-                label="Price per Litre (₹/L)"
+                label={t('onboarding.pricePerLitre')}
                 type="number"
                 inputMode="decimal"
                 placeholder="0.0"

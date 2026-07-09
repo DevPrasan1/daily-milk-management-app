@@ -329,7 +329,7 @@ export default function SellerSettings() {
           <div className="grid grid-cols-2 gap-3 mb-3">
             {selectedCattle.includes('cow') && (
               <Input
-                label="🐄 Cow (₹/L)"
+                label={`🐄 ${t('onboarding.cow')} (₹/L)`}
                 type="number"
                 inputMode="decimal"
                 value={cowPrice}
@@ -338,7 +338,7 @@ export default function SellerSettings() {
             )}
             {selectedCattle.includes('buffalo') && (
               <Input
-                label="🐃 Buffalo (₹/L)"
+                label={`🐃 ${t('onboarding.buffalo')} (₹/L)`}
                 type="number"
                 inputMode="decimal"
                 value={bufPrice}
@@ -347,7 +347,7 @@ export default function SellerSettings() {
             )}
             {selectedCattle.includes('goat') && (
               <Input
-                label="🐐 Goat (₹/L)"
+                label={`🐐 ${t('onboarding.goat')} (₹/L)`}
                 type="number"
                 inputMode="decimal"
                 value={goatPrice}
@@ -356,7 +356,7 @@ export default function SellerSettings() {
             )}
             {selectedCattle.includes('camel') && (
               <Input
-                label="🐪 Camel (₹/L)"
+                label={`🐪 ${t('onboarding.camel')} (₹/L)`}
                 type="number"
                 inputMode="decimal"
                 value={camelPrice}
@@ -366,10 +366,10 @@ export default function SellerSettings() {
           </div>
           {selectedCattle.length > 0 ? (
             <Button size="full" variant="outline" loading={savingPrice} onClick={handleSavePrices}>
-              Save Prices
+              {t('seller.settings.savePrices')}
             </Button>
           ) : (
-            <p className="text-xs text-gray-400 text-center py-2">Select cattle type in profile to configure pricing</p>
+            <p className="text-xs text-gray-400 text-center py-2">{t('seller.settings.selectCattlePrompt')}</p>
           )}
         </Card>
 
