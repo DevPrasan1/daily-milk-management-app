@@ -21,7 +21,7 @@ export default function Onboarding() {
   const navigate = useNavigate()
   const { user, userProfile, loading: authLoading, refreshProfile } = useAuth()
   const { toast } = useApp()
-  const { coords, loading: locLoading, error: locError, getLocation } = useLocation()
+  const { coords, setCoords, loading: locLoading, error: locError, getLocation } = useLocation()
 
   const isSeller = userProfile?.role === ROLES.SELLER
   const isHindi = i18n.language === 'hi'
@@ -273,10 +273,22 @@ export default function Onboarding() {
                       {t('onboarding.fetchLocationBtn')}
                     </Button>
                     {locError && (
-                      <p className="text-xs text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        {locError}
-                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        <p className="text-xs text-red-500 flex items-center gap-1">
+                          <AlertCircle className="w-3.5 h-3.5" />
+                          {locError}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCoords({ lat: 28.6139, lng: 77.2090 })
+                            setErrors(prev => ({ ...prev, location: null }))
+                          }}
+                          className="text-xs text-[#1D9E75] font-semibold hover:underline self-start min-h-[32px] px-1"
+                        >
+                          {t('buyer.nearby.testModeLocation')}
+                        </button>
+                      </div>
                     )}
                     {errors.location && (
                       <p className="text-xs text-red-500 flex items-center gap-1">

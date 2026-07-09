@@ -181,7 +181,8 @@
       "findSellersHeading": "Find sellers near you",
       "locationAccessDesc": "Allow location access to discover milk sellers in your area",
       "allowLocationBtn": "Allow Location",
-      "gettingLocation": "Getting your location..."
+      "gettingLocation": "Getting your location...",
+      "testModeLocation": "Use Delhi/NCR Location (Test Mode)"
     }
   },
   "panchang": {

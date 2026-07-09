@@ -20,7 +20,7 @@ export default function NearbySellers() {
   const { t, i18n } = useTranslation()
   const { user, userProfile } = useAuth()
   const { toast } = useApp()
-  const { coords, loading: locLoading, error: locError, getLocation } = useLocation()
+  const { coords, setCoords, loading: locLoading, error: locError, getLocation } = useLocation()
 
   const [sellers, setSellers] = useState([])
   const [fetching, setFetching] = useState(false)
@@ -149,7 +149,15 @@ export default function NearbySellers() {
               {t('buyer.nearby.allowLocationBtn')}
             </Button>
             {locError && (
-              <p className="text-xs text-red-500 mt-3">{locError}</p>
+              <div className="mt-4 flex flex-col items-center gap-2">
+                <p className="text-xs text-red-500">{locError}</p>
+                <button
+                  onClick={() => setCoords({ lat: 28.6139, lng: 77.2090 })}
+                  className="text-xs text-[#1D9E75] font-semibold hover:underline min-h-[32px] px-3 mt-1"
+                >
+                  {t('buyer.nearby.testModeLocation')}
+                </button>
+              </div>
             )}
           </div>
         )}
