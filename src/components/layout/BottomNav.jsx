@@ -6,7 +6,7 @@ import { clsx } from 'clsx'
 const sellerNav = [
   { to: '/seller', icon: Home, label: 'Home', end: true },
   { to: '/seller/buyers', icon: Users, label: 'Buyers' },
-  // { to: '/seller/entry', icon: ClipboardList, label: 'Entry' },
+  { to: '/seller/nearby', icon: MapPin, label: 'Nearby' },
   { to: '/seller/settings', icon: Settings, label: 'Settings' },
 ]
 

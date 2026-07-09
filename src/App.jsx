@@ -23,6 +23,7 @@ import MyRecords from '@/pages/buyer/MyRecords'
 import NearbySellers from '@/pages/buyer/NearbySellers'
 import BuyerProfile from '@/pages/buyer/BuyerProfile'
 import LinkRequest from '@/pages/buyer/LinkRequest'
+import 'leaflet/dist/leaflet.css'
 
 function Seller({ children }) {
   return <PrivateRoute role={ROLES.SELLER}>{children}</PrivateRoute>
@@ -55,6 +56,7 @@ export default function App() {
               <Route path="/seller/buyers/:buyerId/edit" element={<Seller><AddEditBuyer /></Seller>} />
               <Route path="/seller/entry" element={<Seller><DailyEntry /></Seller>} />
               <Route path="/seller/settings" element={<Seller><SellerSettings /></Seller>} />
+              <Route path="/seller/nearby" element={<Seller><NearbySellers /></Seller>} />
 
               {/* Buyer */}
               <Route path="/buyer" element={<Buyer><BuyerDashboard /></Buyer>} />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import AppShell from '@/components/layout/AppShell'
 import { FullPageSpinner } from '@/components/ui/Spinner'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@/config/firebase'
@@ -88,58 +89,61 @@ export default function RoleSelect() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col px-6 py-12">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-        {t('roleSelect.title')}
-      </h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-        {t('roleSelect.subtitle')}
-      </p>
+    <AppShell showNav={false}>
+      <div className="min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col px-6 py-12">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+          {t('roleSelect.title')}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+          {t('roleSelect.subtitle')}
+        </p>
 
-      <div className="flex flex-col gap-4 flex-1">
-        {roles.map(({ id, icon: Icon, titleKey, descKey }) => (
-          <button
-            key={id}
-            onClick={() => setSelected(id)}
-            className={clsx(
-              'text-left p-5 rounded-2xl border-2 transition-all active:scale-[0.98]',
-              selected === id
-                ? 'border-[#1D9E75] bg-[#1D9E75]/5'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-            )}
-          >
-            <div className="flex items-start gap-4">
-              <div className={clsx(
-                'w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0',
-                selected === id ? 'bg-[#1D9E75]' : 'bg-gray-100 dark:bg-gray-700'
-              )}>
-                <Icon className={clsx('w-6 h-6', selected === id ? 'text-white' : 'text-gray-500 dark:text-gray-300')} />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-gray-900 dark:text-gray-100">
-                  {t(titleKey)}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                  {t(descKey)}
-                </p>
-              </div>
-              {selected === id && (
-                <CheckCircle className="w-5 h-5 text-[#1D9E75] flex-shrink-0 mt-0.5" />
+        <div className="flex flex-col gap-4 flex-1">
+          {roles.map(({ id, icon: Icon, titleKey, descKey }) => (
+            <button
+              key={id}
+              onClick={() => setSelected(id)}
+              className={clsx(
+                'text-left p-5 rounded-2xl border-2 transition-all active:scale-[0.98]',
+                selected === id
+                  ? 'border-[#1D9E75] bg-[#1D9E75]/5'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
               )}
-            </div>
-          </button>
-        ))}
-      </div>
+            >
+              <div className="flex items-start gap-4">
+                <div className={clsx(
+                  'w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0',
+                  selected === id ? 'bg-[#1D9E75]' : 'bg-gray-100 dark:bg-gray-700'
+                )}>
+                  <Icon className={clsx('w-6 h-6', selected === id ? 'text-white' : 'text-gray-500 dark:text-gray-300')} />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
+                    {t(titleKey)}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                    {t(descKey)}
+                  </p>
+                </div>
+                {selected === id && (
+                  <CheckCircle className="w-5 h-5 text-[#1D9E75] flex-shrink-0 mt-0.5" />
+                )}
+              </div>
+            </button>
+          ))}
+        </div>
 
-      <Button
-        size="full"
-        className="mt-8"
-        disabled={!selected}
-        loading={loading}
-        onClick={handleContinue}
-      >
-        {t('roleSelect.selectBtn')} {selected ? (selected === ROLES.SELLER ? 'Seller' : 'Buyer') : ''}
-      </Button>
-    </div>
+        <Button
+          size="full"
+          className="mt-8"
+          disabled={!selected}
+          loading={loading}
+          onClick={handleContinue}
+        >
+          {t('roleSelect.selectBtn')} {selected ? (selected === ROLES.SELLER ? 'Seller' : 'Buyer') : ''}
+        </Button>
+      </div>
+    </AppShell>
+
   )
 }

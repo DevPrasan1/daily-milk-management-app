@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { FullPageSpinner } from '@/components/ui/Spinner'
 import { doc, updateDoc, setDoc, GeoPoint } from 'firebase/firestore'
 import { db } from '@/config/firebase'
+import AppShell from '@/components/layout/AppShell'
 import { useAuth } from '@/context/AuthContext'
 import { useApp } from '@/context/AppContext'
 import { useLocation } from '@/hooks/useLocation'
@@ -109,186 +110,189 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col px-6 py-12">
-      <div className="w-12 h-12 rounded-2xl bg-[#1D9E75]/10 flex items-center justify-center mb-6">
-        <Milk className="w-6 h-6 text-[#1D9E75]" />
-      </div>
+    <AppShell showNav={false}>
 
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-        {t('onboarding.title')}
-      </h1>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-        {userProfile?.phone || user?.phoneNumber}
-      </p>
+      <div className="min-h-screen bg-[#FAFAF8] dark:bg-gray-900 flex flex-col px-6 py-12">
+        <div className="w-12 h-12 rounded-2xl bg-[#1D9E75]/10 flex items-center justify-center mb-6">
+          <Milk className="w-6 h-6 text-[#1D9E75]" />
+        </div>
 
-      <div className="flex flex-col gap-5 flex-1">
-        <Input
-          label={t('onboarding.phoneLabel')}
-          value={userProfile?.phone || user?.phoneNumber || ''}
-          disabled
-          className="bg-gray-50 dark:bg-gray-800/50 cursor-not-allowed opacity-75"
-        />
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+          {t('onboarding.title')}
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+          {userProfile?.phone || user?.phoneNumber}
+        </p>
 
-        <Input
-          label={t('common.name')}
-          placeholder={t('onboarding.namePlaceholder')}
-          value={name}
-          onChange={e => setName(e.target.value)}
-          error={errors.name}
-        />
+        <div className="flex flex-col gap-5 flex-1">
+          <Input
+            label={t('onboarding.phoneLabel')}
+            value={userProfile?.phone || user?.phoneNumber || ''}
+            disabled
+            className="bg-gray-50 dark:bg-gray-800/50 cursor-not-allowed opacity-75"
+          />
 
-        <Input
-          label={t('common.note')}
-          placeholder={t('onboarding.aboutPlaceholder')}
-          value={about}
-          onChange={e => setAbout(e.target.value)}
-        />
+          <Input
+            label={t('common.name')}
+            placeholder={t('onboarding.namePlaceholder')}
+            value={name}
+            onChange={e => setName(e.target.value)}
+            error={errors.name}
+          />
 
-        {isSeller && (
-          <>
-            <div className="flex flex-col gap-2 mt-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('onboarding.cattleTypeLabel')}
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {CATTLE_OPTIONS.map(opt => {
-                  const isSelected = selectedCattle.includes(opt.value)
-                  const label = isHindi ? opt.labelHi : opt.labelEn
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
+          <Input
+            label={t('common.note')}
+            placeholder={t('onboarding.aboutPlaceholder')}
+            value={about}
+            onChange={e => setAbout(e.target.value)}
+          />
+
+          {isSeller && (
+            <>
+              <div className="flex flex-col gap-2 mt-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t('onboarding.cattleTypeLabel')}
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {CATTLE_OPTIONS.map(opt => {
+                    const isSelected = selectedCattle.includes(opt.value)
+                    const label = isHindi ? opt.labelHi : opt.labelEn
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCattle(prev =>
+                            prev.includes(opt.value)
+                              ? prev.filter(c => c !== opt.value)
+                              : [...prev, opt.value]
+                          )
+                          setErrors(prev => ({ ...prev, cattle: null }))
+                        }}
+                        className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-medium transition-all min-h-[44px] ${isSelected
+                          ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
+                          : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                          }`}
+                      >
+                        <span>{label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+                {errors.cattle && (
+                  <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {errors.cattle}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2 mt-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t('onboarding.openToSellLabel')}
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setOpenToSell(true)}
+                    className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm transition-all min-h-[44px] ${openToSell
+                      ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                      }`}
+                  >
+                    {t('common.yes')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOpenToSell(false)}
+                    className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm transition-all min-h-[44px] ${!openToSell
+                      ? 'border-red-500 bg-red-500/10 text-red-500'
+                      : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                      }`}
+                  >
+                    {t('common.no')}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 mt-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t('onboarding.currentLocationLabel')}
+                </label>
+                {coords ? (
+                  <div className="flex items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50/50 dark:bg-green-950/20 dark:border-green-900/50">
+                    <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-green-600 dark:text-green-400 flex-shrink-0">
+                      <Check className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-green-800 dark:text-green-400">
+                        {t('onboarding.locationSecured')}
+                      </p>
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-green-600 dark:text-green-500 hover:underline cursor-pointer flex items-center gap-1 mt-0.5"
+                      >
+                        Lat: {coords.lat.toFixed(6)}, Lng: {coords.lng.toFixed(6)} ↗
+                      </a>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="min-h-[32px] py-1 px-2.5 text-xs text-[#1D9E75]"
                       onClick={() => {
-                        setSelectedCattle(prev =>
-                          prev.includes(opt.value)
-                            ? prev.filter(c => c !== opt.value)
-                            : [...prev, opt.value]
-                        )
-                        setErrors(prev => ({ ...prev, cattle: null }))
+                        getLocation()
+                        setErrors(prev => ({ ...prev, location: null }))
                       }}
-                      className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-medium transition-all min-h-[44px] ${isSelected
-                        ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
-                        : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
-                        }`}
+                      loading={locLoading}
                     >
-                      <span>{label}</span>
-                    </button>
-                  )
-                })}
-              </div>
-              {errors.cattle && (
-                <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  {errors.cattle}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2 mt-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('onboarding.openToSellLabel')}
-              </label>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setOpenToSell(true)}
-                  className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm transition-all min-h-[44px] ${openToSell
-                    ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
-                    : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
-                    }`}
-                >
-                  {t('common.yes')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOpenToSell(false)}
-                  className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm transition-all min-h-[44px] ${!openToSell
-                    ? 'border-red-500 bg-red-500/10 text-red-500'
-                    : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
-                    }`}
-                >
-                  {t('common.no')}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 mt-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('onboarding.currentLocationLabel')}
-              </label>
-              {coords ? (
-                <div className="flex items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50/50 dark:bg-green-950/20 dark:border-green-900/50">
-                  <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-green-600 dark:text-green-400 flex-shrink-0">
-                    <Check className="w-4 h-4" />
+                      {t('common.retry')}
+                    </Button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-green-800 dark:text-green-400">
-                      {t('onboarding.locationSecured')}
-                    </p>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] text-green-600 dark:text-green-500 hover:underline cursor-pointer flex items-center gap-1 mt-0.5"
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      size="full"
+                      variant="outline"
+                      onClick={() => {
+                        getLocation()
+                        setErrors(prev => ({ ...prev, location: null }))
+                      }}
+                      loading={locLoading}
+                      className="flex items-center gap-2"
                     >
-                      Lat: {coords.lat.toFixed(6)}, Lng: {coords.lng.toFixed(6)} ↗
-                    </a>
+                      <MapPin className="w-4 h-4" />
+                      {t('onboarding.fetchLocationBtn')}
+                    </Button>
+                    {locError && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {locError}
+                      </p>
+                    )}
+                    {errors.location && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {errors.location}
+                      </p>
+                    )}
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="min-h-[32px] py-1 px-2.5 text-xs text-[#1D9E75]"
-                    onClick={() => {
-                      getLocation()
-                      setErrors(prev => ({ ...prev, location: null }))
-                    }}
-                    loading={locLoading}
-                  >
-                    {t('common.retry')}
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <Button
-                    size="full"
-                    variant="outline"
-                    onClick={() => {
-                      getLocation()
-                      setErrors(prev => ({ ...prev, location: null }))
-                    }}
-                    loading={locLoading}
-                    className="flex items-center gap-2"
-                  >
-                    <MapPin className="w-4 h-4" />
-                    {t('onboarding.fetchLocationBtn')}
-                  </Button>
-                  {locError && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {locError}
-                    </p>
-                  )}
-                  {errors.location && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {errors.location}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          </>
-        )}
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        <Button
+          size="full"
+          className="mt-8"
+          loading={loading}
+          onClick={handleContinue}
+        >
+          {t('onboarding.continueBtn')}
+        </Button>
       </div>
-
-      <Button
-        size="full"
-        className="mt-8"
-        loading={loading}
-        onClick={handleContinue}
-      >
-        {t('onboarding.continueBtn')}
-      </Button>
-    </div>
+    </AppShell>
   )
 }
