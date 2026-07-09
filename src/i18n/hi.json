@@ -86,7 +86,17 @@
     "cow": "गाय",
     "buffalo": "भैंस",
     "goat": "बकरी",
-    "camel": "ऊंट"
+    "camel": "ऊंट",
+    "openToSellLabel": "दूध बेचने के लिए उपलब्ध",
+    "openToSellDesc": "आस-पास के खरीदारों को आपको खोजने दें",
+    "currentLocationLabel": "वर्तमान स्थान",
+    "currentLocationDesc": "विक्रेता के रूप में पंजीकरण करने के लिए जीपीएस स्थान अनिवार्य है",
+    "fetchLocationBtn": "स्थान प्राप्त करें",
+    "locationSecured": "स्थान सुरक्षित हो गया",
+    "locationMandatory": "विक्रेता के लिए वर्तमान स्थान अनिवार्य है",
+    "cattleTypeLabel": "आप किस पशु का दूध बेचते हैं?",
+    "phoneLabel": "मोबाइल नंबर",
+    "saveProfile": "प्रोफ़ाइल सेव करें"
   },
   "seller": {
     "dashboard": {

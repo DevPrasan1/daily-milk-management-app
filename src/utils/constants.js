@@ -11,10 +11,10 @@ export const CATTLE_TYPES = {
 }
 
 export const CATTLE_OPTIONS = [
-  { value: 'cow',     labelEn: 'Cow',     labelHi: 'गाय' },
-  { value: 'buffalo', labelEn: 'Buffalo', labelHi: 'भैंस' },
-  { value: 'goat',    labelEn: 'Goat',    labelHi: 'बकरी' },
-  { value: 'camel',   labelEn: 'Camel',   labelHi: 'ऊंट' },
+  { value: 'cow', labelEn: '🐄 Cow', labelHi: '🐄 गाय' },
+  { value: 'buffalo', labelEn: '🐃 Buffalo', labelHi: '🐃 भैंस' },
+  { value: 'goat', labelEn: '🐐 Goat', labelHi: '🐐 बकरी' },
+  { value: 'camel', labelEn: '🐪 Camel', labelHi: '🐪 ऊंट' },
 ]
 
 export const SESSIONS = {

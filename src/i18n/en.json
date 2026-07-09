@@ -86,7 +86,17 @@
     "cow": "Cow",
     "buffalo": "Buffalo",
     "goat": "Goat",
-    "camel": "Camel"
+    "camel": "Camel",
+    "openToSellLabel": "Open to Sell Milk",
+    "openToSellDesc": "Allow nearby buyers to find you",
+    "currentLocationLabel": "Current Location",
+    "currentLocationDesc": "GPS location is mandatory to register as a seller",
+    "fetchLocationBtn": "Fetch Current Location",
+    "locationSecured": "Location Secured",
+    "locationMandatory": "Current Location is mandatory for sellers",
+    "cattleTypeLabel": "Type of cattle you sell milk from",
+    "phoneLabel": "Phone Number",
+    "saveProfile": "Save Profile"
   },
   "seller": {
     "dashboard": {

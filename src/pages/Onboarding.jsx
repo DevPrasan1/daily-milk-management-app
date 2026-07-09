@@ -2,30 +2,32 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { FullPageSpinner } from '@/components/ui/Spinner'
-import { doc, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { doc, updateDoc, setDoc, GeoPoint } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 import { useAuth } from '@/context/AuthContext'
 import { useApp } from '@/context/AppContext'
+import { useLocation } from '@/hooks/useLocation'
 import { ROLES, CATTLE_OPTIONS } from '@/utils/constants'
-import { validateName, validatePrice } from '@/utils/validators'
+import { validateName } from '@/utils/validators'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Milk, Plus, Trash2 } from 'lucide-react'
+import { Milk, MapPin, Check, AlertCircle } from 'lucide-react'
+
 
 export default function Onboarding() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { user, userProfile, loading: authLoading, refreshProfile } = useAuth()
   const { toast } = useApp()
+  const { coords, loading: locLoading, error: locError, getLocation } = useLocation()
 
   const isSeller = userProfile?.role === ROLES.SELLER
   const isHindi = i18n.language === 'hi'
 
   const [name, setName] = useState('')
   const [about, setAbout] = useState('')
-  const [homeDelivery, setHomeDelivery] = useState(false)
-  // Each entry: { cattleType: string, price: string, totalMilk: string }
-  const [cattleEntries, setCattleEntries] = useState([])
+  const [selectedCattle, setSelectedCattle] = useState([])
+  const [openToSell, setOpenToSell] = useState(true)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
@@ -46,76 +48,55 @@ export default function Onboarding() {
 
   if (authLoading) return <FullPageSpinner />
 
-  const usedTypes = cattleEntries.map(e => e.cattleType).filter(Boolean)
-  const availableOptions = CATTLE_OPTIONS.filter(o => !usedTypes.includes(o.value))
-
-  function addCattle() {
-    setCattleEntries(prev => [...prev, { cattleType: '', price: '', totalMilk: '' }])
-  }
-
-  function removeCattle(idx) {
-    setCattleEntries(prev => prev.filter((_, i) => i !== idx))
-    setErrors(prev => {
-      const next = { ...prev }
-      delete next[`price_${idx}`]
-      delete next[`totalMilk_${idx}`]
-      delete next[`cattleType_${idx}`]
-      return next
-    })
-  }
-
-  function updateEntry(idx, field, value) {
-    setCattleEntries(prev => prev.map((e, i) => i === idx ? { ...e, [field]: value } : e))
-  }
-
   function validate() {
     const errs = {}
     const nameErr = validateName(name)
     if (nameErr) errs.name = nameErr
 
     if (isSeller) {
-      cattleEntries.forEach((entry, idx) => {
-        if (!entry.cattleType) {
-          errs[`cattleType_${idx}`] = t('onboarding.selectCattle')
-        }
-        if (entry.price) {
-          const pErr = validatePrice(entry.price)
-          if (pErr) errs[`price_${idx}`] = pErr
-        }
-        if (entry.totalMilk) {
-          const n = parseFloat(entry.totalMilk)
-          if (isNaN(n) || n <= 0) errs[`totalMilk_${idx}`] = 'Enter a valid quantity'
-        }
-      })
+      if (selectedCattle.length === 0) {
+        errs.cattle = t('onboarding.selectCattle')
+      }
+      if (!coords) {
+        errs.location = t('onboarding.locationMandatory')
+      }
     }
     return errs
   }
 
   async function handleContinue() {
     const errs = validate()
-    if (Object.keys(errs).length) { setErrors(errs); return }
+    if (Object.keys(errs).length) {
+      setErrors(errs)
+      return
+    }
     setLoading(true)
     try {
-      await updateDoc(doc(db, 'users', user.uid), {
+      const updateData = {
         name: name.trim(),
         about: about.trim(),
-      })
+      }
 
       if (isSeller) {
-        await updateDoc(doc(db, 'sellers', user.uid), { homeDelivery })
+        updateData.gpsLocation = new GeoPoint(coords.lat, coords.lng)
+        updateData.openToSell = openToSell
+        updateData.hasCow = selectedCattle.includes('cow')
+        updateData.hasBuffalo = selectedCattle.includes('buffalo')
+        updateData.hasGoat = selectedCattle.includes('goat')
+        updateData.hasCamel = selectedCattle.includes('camel')
+      }
 
-        for (const entry of cattleEntries) {
-          if (!entry.cattleType) continue
-          const priceId = `global_${entry.cattleType}`
-          const data = {
-            buyerId: null,
-            cattleType: entry.cattleType,
-            fromDate: serverTimestamp(),
-          }
-          if (entry.price) data.pricePerLitre = parseFloat(entry.price)
-          if (entry.totalMilk) data.totalMilk = parseFloat(entry.totalMilk)
-          await setDoc(doc(db, 'sellerPrices', user.uid, 'prices', priceId), data)
-        }
+      await updateDoc(doc(db, 'users', user.uid), updateData)
+
+      if (isSeller) {
+        await setDoc(doc(db, 'sellers', user.uid), {
+          gpsLocation: new GeoPoint(coords.lat, coords.lng),
+          openToSell,
+          hasCow: selectedCattle.includes('cow'),
+          hasBuffalo: selectedCattle.includes('buffalo'),
+          hasGoat: selectedCattle.includes('goat'),
+          hasCamel: selectedCattle.includes('camel'),
+        }, { merge: true })
       }
 
       refreshProfile()
@@ -125,10 +106,6 @@ export default function Onboarding() {
     } finally {
       setLoading(false)
     }
-  }
-
-  function cattleLabel(option) {
-    return isHindi ? option.labelHi : option.labelEn
   }
 
   return (
@@ -144,7 +121,14 @@ export default function Onboarding() {
         {userProfile?.phone || user?.phoneNumber}
       </p>
 
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-col gap-5 flex-1">
+        <Input
+          label={t('onboarding.phoneLabel')}
+          value={userProfile?.phone || user?.phoneNumber || ''}
+          disabled
+          className="bg-gray-50 dark:bg-gray-800/50 cursor-not-allowed opacity-75"
+        />
+
         <Input
           label={t('common.name')}
           placeholder={t('onboarding.namePlaceholder')}
@@ -162,98 +146,137 @@ export default function Onboarding() {
 
         {isSeller && (
           <>
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-2">
-              {t('onboarding.sellerExtra')}
-            </p>
-
-            <label className="flex items-center gap-3 py-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={homeDelivery}
-                onChange={e => setHomeDelivery(e.target.checked)}
-                className="w-5 h-5 rounded accent-[#1D9E75]"
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                {t('onboarding.homeDelivery')}
-              </span>
-            </label>
-
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-2">
-              {t('onboarding.cattleSection')}
-            </p>
-
-            {cattleEntries.map((entry, idx) => (
-              <div
-                key={idx}
-                className="border border-gray-200 dark:border-gray-700 rounded-2xl p-4 flex flex-col gap-3 bg-white dark:bg-gray-800"
-              >
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                    {t('onboarding.cattleType')}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => removeCattle(idx)}
-                    className="text-red-400 hover:text-red-600 p-1"
-                    aria-label={t('onboarding.removeCattle')}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <select
-                  value={entry.cattleType}
-                  onChange={e => updateEntry(idx, 'cattleType', e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-[#FAFAF8] dark:bg-gray-900 text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D9E75]/40"
-                >
-                  <option value="">{t('onboarding.selectCattle')}</option>
-                  {CATTLE_OPTIONS.filter(
-                    o => o.value === entry.cattleType || !usedTypes.includes(o.value)
-                  ).map(o => (
-                    <option key={o.value} value={o.value}>
-                      {cattleLabel(o)}
-                    </option>
-                  ))}
-                </select>
-                {errors[`cattleType_${idx}`] && (
-                  <p className="text-xs text-red-500">{errors[`cattleType_${idx}`]}</p>
-                )}
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Input
-                    label={t('onboarding.pricePerLitre')}
-                    type="number"
-                    inputMode="decimal"
-                    placeholder="e.g. 60"
-                    suffix="₹/L"
-                    value={entry.price}
-                    onChange={e => updateEntry(idx, 'price', e.target.value)}
-                    error={errors[`price_${idx}`]}
-                  />
-                  <Input
-                    label={t('onboarding.totalMilk')}
-                    type="number"
-                    inputMode="decimal"
-                    placeholder="e.g. 20"
-                    suffix="L"
-                    value={entry.totalMilk}
-                    onChange={e => updateEntry(idx, 'totalMilk', e.target.value)}
-                    error={errors[`totalMilk_${idx}`]}
-                  />
-                </div>
+            <div className="flex flex-col gap-2 mt-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('onboarding.cattleTypeLabel')}
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {CATTLE_OPTIONS.map(opt => {
+                  const isSelected = selectedCattle.includes(opt.value)
+                  const label = isHindi ? opt.labelHi : opt.labelEn
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCattle(prev =>
+                          prev.includes(opt.value)
+                            ? prev.filter(c => c !== opt.value)
+                            : [...prev, opt.value]
+                        )
+                        setErrors(prev => ({ ...prev, cattle: null }))
+                      }}
+                      className={`flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-medium transition-all min-h-[44px] ${isSelected
+                        ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
+                        : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                        }`}
+                    >
+                      <span>{label}</span>
+                    </button>
+                  )
+                })}
               </div>
-            ))}
+              {errors.cattle && (
+                <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  {errors.cattle}
+                </p>
+              )}
+            </div>
 
-            {availableOptions.length > 0 && (
-              <button
-                type="button"
-                onClick={addCattle}
-                className="flex items-center gap-2 text-sm font-medium text-[#1D9E75] border border-dashed border-[#1D9E75]/50 rounded-2xl py-3 px-4 hover:bg-[#1D9E75]/5 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                {t('onboarding.addCattle')}
-              </button>
-            )}
+            <div className="flex flex-col gap-2 mt-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('onboarding.openToSellLabel')}
+              </label>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setOpenToSell(true)}
+                  className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm transition-all min-h-[44px] ${openToSell
+                    ? 'border-[#1D9E75] bg-[#1D9E75]/10 text-[#1D9E75]'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                    }`}
+                >
+                  {t('common.yes')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpenToSell(false)}
+                  className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm transition-all min-h-[44px] ${!openToSell
+                    ? 'border-red-500 bg-red-500/10 text-red-500'
+                    : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                    }`}
+                >
+                  {t('common.no')}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 mt-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('onboarding.currentLocationLabel')}
+              </label>
+              {coords ? (
+                <div className="flex items-center gap-3 p-4 rounded-xl border border-green-200 bg-green-50/50 dark:bg-green-950/20 dark:border-green-900/50">
+                  <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-green-600 dark:text-green-400 flex-shrink-0">
+                    <Check className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-green-800 dark:text-green-400">
+                      {t('onboarding.locationSecured')}
+                    </p>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-green-600 dark:text-green-500 hover:underline cursor-pointer flex items-center gap-1 mt-0.5"
+                    >
+                      Lat: {coords.lat.toFixed(6)}, Lng: {coords.lng.toFixed(6)} ↗
+                    </a>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="min-h-[32px] py-1 px-2.5 text-xs text-[#1D9E75]"
+                    onClick={() => {
+                      getLocation()
+                      setErrors(prev => ({ ...prev, location: null }))
+                    }}
+                    loading={locLoading}
+                  >
+                    {t('common.retry')}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Button
+                    size="full"
+                    variant="outline"
+                    onClick={() => {
+                      getLocation()
+                      setErrors(prev => ({ ...prev, location: null }))
+                    }}
+                    loading={locLoading}
+                    className="flex items-center gap-2"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    {t('onboarding.fetchLocationBtn')}
+                  </Button>
+                  {locError && (
+                    <p className="text-xs text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {locError}
+                    </p>
+                  )}
+                  {errors.location && (
+                    <p className="text-xs text-red-500 flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.location}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>
