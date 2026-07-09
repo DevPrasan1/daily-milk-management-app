@@ -2,6 +2,9 @@
 
 A modern, responsive Progressive Web Application (PWA) designed for dairy sellers and buyers to log milk deliveries, track payment records, and maintain billing transparency.
 
+**Live Application Link**: [https://my-milkbook.netlify.app/](https://my-milkbook.netlify.app/)  
+
+
 ---
 
 ## App Screenshots
