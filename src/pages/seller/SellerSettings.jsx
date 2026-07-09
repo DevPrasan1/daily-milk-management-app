@@ -96,15 +96,16 @@ export default function SellerSettings() {
       toast('Select at least one cattle type', 'warning')
       return
     }
-    if (!customCoords) {
-      toast('Location is mandatory', 'warning')
+    if (openToSell && !customCoords) {
+      toast('Location is mandatory when open to sell milk', 'warning')
       return
     }
 
     setSavingProfile(true)
     try {
-      const geoPoint = new GeoPoint(customCoords.lat, customCoords.lng)
-      const hash = geohashForLocation([customCoords.lat, customCoords.lng])
+      const hasCoords = !!customCoords
+      const geoPoint = hasCoords ? new GeoPoint(customCoords.lat, customCoords.lng) : null
+      const hash = hasCoords ? geohashForLocation([customCoords.lat, customCoords.lng]) : null
       const updateData = {
         name: name.trim(),
         about: about.trim(),

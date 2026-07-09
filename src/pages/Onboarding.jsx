@@ -60,7 +60,7 @@ export default function Onboarding() {
       if (selectedCattle.length === 0) {
         errs.cattle = t('onboarding.selectCattle')
       }
-      if (!coords) {
+      if (openToSell && !coords) {
         errs.location = t('onboarding.locationMandatory')
       }
     }
@@ -81,8 +81,9 @@ export default function Onboarding() {
       }
 
       if (isSeller) {
-        const hash = geohashForLocation([coords.lat, coords.lng])
-        updateData.gpsLocation = new GeoPoint(coords.lat, coords.lng)
+        const hasCoords = !!coords
+        const hash = hasCoords ? geohashForLocation([coords.lat, coords.lng]) : null
+        updateData.gpsLocation = hasCoords ? new GeoPoint(coords.lat, coords.lng) : null
         updateData.geohash = hash
         updateData.openToSell = openToSell
         updateData.hasCow = selectedCattle.includes('cow')
@@ -94,9 +95,10 @@ export default function Onboarding() {
       await updateDoc(doc(db, 'users', user.uid), updateData)
 
       if (isSeller) {
-        const hash = geohashForLocation([coords.lat, coords.lng])
+        const hasCoords = !!coords
+        const hash = hasCoords ? geohashForLocation([coords.lat, coords.lng]) : null
         await setDoc(doc(db, 'sellers', user.uid), {
-          gpsLocation: new GeoPoint(coords.lat, coords.lng),
+          gpsLocation: hasCoords ? new GeoPoint(coords.lat, coords.lng) : null,
           geohash: hash,
           openToSell,
           hasCow: selectedCattle.includes('cow'),

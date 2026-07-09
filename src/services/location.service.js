@@ -45,6 +45,7 @@ export async function getNearbySellers(lat, lng, radiusKm = 10) {
       const data = doc.data()
       // Filter role client-side to avoid needing a Firestore composite index
       if (data.role !== 'seller') continue
+      if (data.openToSell === false) continue
 
       const latVal = data.gpsLocation?.latitude
       const lngVal = data.gpsLocation?.longitude

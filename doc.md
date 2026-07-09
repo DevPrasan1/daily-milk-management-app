@@ -9,8 +9,8 @@
 ### Seller / Buyer role-specific discovery flow
 1. **Login** (`/login`) — OTP via Firebase Phone Auth.
 2. **Role select** (`/role-select`) — writes `role: 'seller' | 'buyer'` to `users/{uid}`.
-3. **Onboarding** (`/onboarding`) — sets profile `name` and metadata. Sellers also secure GPS location and default cattle configurations.
-4. **Nearby sellers** (`/buyer/nearby` or `/seller/nearby`) — geolocation-based seller discovery for map queries.
+3. **Onboarding** (`/onboarding`) — sets profile `name` and metadata. Providing current GPS coordinates (`gpsLocation` & `geohash`) is **mandatory** for sellers who are open to selling and want to be searchable by nearby buyers.
+4. **Nearby sellers** (`/buyer/nearby` or `/seller/nearby`) — geolocation-based seller discovery. The searching user **must** provide their current coordinates to query and display matching sellers in the 10km radius.
 
 ### MilkBook Shared Ledger flow
 1. **Starting a MilkBook** — Any onboarded user (buyer or seller) can create a MilkBook. The creator inputs the partner's name, phone (optional), default quantities, and prices.
