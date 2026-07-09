@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 import { saveRecord } from '@/services/record.service'
+import { saveMilkBookRecord } from '@/services/milkbook.service'
 import { useApp } from '@/context/AppContext'
 import { validateQuantity } from '@/utils/validators'
 import Button from '@/components/ui/Button'
@@ -10,7 +11,7 @@ import Input from '@/components/ui/Input'
 import Modal from '@/components/ui/Modal'
 import CattleSelector from '../seller/CattleSelector'
 
-export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSaved }) {
+export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSaved, milkbookId }) {
   const { t } = useTranslation()
   const { toast } = useApp()
 
@@ -79,8 +80,14 @@ export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSav
       const dateObj = new Date(yr, mo - 1, dy)
 
       // Check if record already exists
-      const recordId = `${buyer.id}_${cattle}_${dateObj.getFullYear()}${String(dateObj.getMonth() + 1).padStart(2, '0')}${String(dateObj.getDate()).padStart(2, '0')}`
-      const docRef = doc(db, 'records', sellerId, 'entries', recordId)
+      const recordId = milkbookId 
+        ? `${cattle}_${dateObj.getFullYear()}${String(dateObj.getMonth() + 1).padStart(2, '0')}${String(dateObj.getDate()).padStart(2, '0')}`
+        : `${buyer.id}_${cattle}_${dateObj.getFullYear()}${String(dateObj.getMonth() + 1).padStart(2, '0')}${String(dateObj.getDate()).padStart(2, '0')}`
+      
+      const docRef = milkbookId
+        ? doc(db, 'milkbooks', milkbookId, 'records', recordId)
+        : doc(db, 'records', sellerId, 'entries', recordId)
+        
       const docSnap = await getDoc(docRef)
       if (docSnap.exists()) {
         setErrors({ date: t('common.recordExistsError') })
@@ -91,12 +98,17 @@ export default function RecordEntryModal({ sellerId, buyer, open, onClose, onSav
       const m = morning ? parseFloat(morning) : 0
       const e = evening ? parseFloat(evening) : 0
 
-      await saveRecord(sellerId, buyer.id, dateObj, cattle, m, e, comment, 'manual')
+      if (milkbookId) {
+        await saveMilkBookRecord(milkbookId, dateObj, cattle, m, e, comment, 'manual')
+      } else {
+        await saveRecord(sellerId, buyer.id, dateObj, cattle, m, e, comment, 'manual')
+      }
       toast('Entry saved', 'success')
       setComment('')
       onSaved?.()
       onClose()
-    } catch {
+    } catch (e) {
+      console.error(e)
       toast(t('common.error'), 'error')
     } finally {
       setLoading(false)

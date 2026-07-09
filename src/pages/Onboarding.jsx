@@ -13,6 +13,7 @@ import { validateName } from '@/utils/validators'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Milk, MapPin, Check, AlertCircle } from 'lucide-react'
+import { linkPendingMilkbooks } from '@/services/milkbook.service'
 
 
 export default function Onboarding() {
@@ -98,6 +99,12 @@ export default function Onboarding() {
           hasGoat: selectedCattle.includes('goat'),
           hasCamel: selectedCattle.includes('camel'),
         }, { merge: true })
+      }
+
+      try {
+        await linkPendingMilkbooks(user.uid, user.phoneNumber)
+      } catch (err) {
+        console.error('Error linking pending books:', err)
       }
 
       refreshProfile()

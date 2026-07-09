@@ -5,14 +5,12 @@ import { clsx } from 'clsx'
 
 const sellerNav = [
   { to: '/seller', icon: Home, label: 'Home', end: true },
-  { to: '/seller/buyers', icon: Users, label: 'Buyers' },
   { to: '/seller/nearby', icon: MapPin, label: 'Nearby' },
   { to: '/seller/settings', icon: Settings, label: 'Settings' },
 ]
 
 const buyerNav = [
   { to: '/buyer', icon: Home, label: 'Home', end: true },
-  { to: '/buyer/records', icon: BookOpen, label: 'Records' },
   { to: '/buyer/nearby', icon: MapPin, label: 'Nearby' },
   { to: '/buyer/profile', icon: User, label: 'Profile' },
 ]

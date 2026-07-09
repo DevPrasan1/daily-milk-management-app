@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { addPayment } from '@/services/billing.service'
+import { addMilkBookPayment } from '@/services/milkbook.service'
 import { useApp } from '@/context/AppContext'
 import { validatePrice } from '@/utils/validators'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Modal from '@/components/ui/Modal'
 
-export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved }) {
+export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved, milkbookId }) {
   const { t } = useTranslation()
   const { toast } = useApp()
   const [amount, setAmount] = useState('')
@@ -24,7 +25,11 @@ export default function PaymentEntry({ sellerId, buyerId, open, onClose, onSaved
     try {
       const [yr, mo, dy] = paymentDate.split('-').map(Number)
       const dateObj = new Date(yr, mo - 1, dy)
-      await addPayment(sellerId, buyerId, parseFloat(amount), dateObj, note)
+      if (milkbookId) {
+        await addMilkBookPayment(milkbookId, sellerId, parseFloat(amount), dateObj, note)
+      } else {
+        await addPayment(sellerId, buyerId, parseFloat(amount), dateObj, note)
+      }
       toast('Payment recorded', 'success')
       setAmount('')
       setNote('')

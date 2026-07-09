@@ -12,17 +12,15 @@ import RoleSelect from '@/pages/RoleSelect'
 import Onboarding from '@/pages/Onboarding'
 
 import SellerDashboard from '@/pages/seller/SellerDashboard'
-import BuyerList from '@/pages/seller/BuyerList'
-import AddEditBuyer from '@/pages/seller/AddEditBuyer'
-import BuyerDetail from '@/pages/seller/BuyerDetail'
-import DailyEntry from '@/pages/seller/DailyEntry'
 import SellerSettings from '@/pages/seller/SellerSettings'
 
 import BuyerDashboard from '@/pages/buyer/BuyerDashboard'
-import MyRecords from '@/pages/buyer/MyRecords'
 import NearbySellers from '@/pages/buyer/NearbySellers'
 import BuyerProfile from '@/pages/buyer/BuyerProfile'
 import LinkRequest from '@/pages/buyer/LinkRequest'
+
+import AddEditMilkBook from '@/pages/AddEditMilkBook'
+import MilkBookDetail from '@/pages/MilkBookDetail'
 import 'leaflet/dist/leaflet.css'
 
 function Seller({ children }) {
@@ -50,20 +48,19 @@ export default function App() {
 
               {/* Seller */}
               <Route path="/seller" element={<Seller><SellerDashboard /></Seller>} />
-              <Route path="/seller/buyers" element={<Seller><BuyerList /></Seller>} />
-              <Route path="/seller/buyers/add" element={<Seller><AddEditBuyer /></Seller>} />
-              <Route path="/seller/buyers/:buyerId" element={<Seller><BuyerDetail /></Seller>} />
-              <Route path="/seller/buyers/:buyerId/edit" element={<Seller><AddEditBuyer /></Seller>} />
-              <Route path="/seller/entry" element={<Seller><DailyEntry /></Seller>} />
               <Route path="/seller/settings" element={<Seller><SellerSettings /></Seller>} />
               <Route path="/seller/nearby" element={<Seller><NearbySellers /></Seller>} />
 
               {/* Buyer */}
               <Route path="/buyer" element={<Buyer><BuyerDashboard /></Buyer>} />
-              <Route path="/buyer/records" element={<Buyer><MyRecords /></Buyer>} />
               <Route path="/buyer/nearby" element={<Buyer><NearbySellers /></Buyer>} />
               <Route path="/buyer/profile" element={<Buyer><BuyerProfile /></Buyer>} />
               <Route path="/buyer/link-requests" element={<Buyer><LinkRequest /></Buyer>} />
+
+              {/* Unified MilkBooks */}
+              <Route path="/milkbooks/add" element={<PrivateRoute><AddEditMilkBook /></PrivateRoute>} />
+              <Route path="/milkbooks/:milkbookId" element={<PrivateRoute><MilkBookDetail /></PrivateRoute>} />
+              <Route path="/milkbooks/:milkbookId/edit" element={<PrivateRoute><AddEditMilkBook /></PrivateRoute>} />
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

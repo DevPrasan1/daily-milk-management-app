@@ -26,7 +26,9 @@ No automated tests exist in this project.
 
 ## Architecture
 
-**MilkBook** is a PWA for milk delivery tracking between sellers (dairy farmers) and buyers (customers). Two distinct user roles drive the entire data model and routing.
+**MilkBook** is a PWA for milk delivery tracking between dairy sellers and buyers. While users select a role (`seller` or `buyer`) for discovery on the map, any user can create and maintain a **MilkBook** ledger.
+- **Creator (Editor)**: The user who starts the milkbook has write/update access to its daily entries and payments.
+- **Viewer (Read-Only)**: The partner user gets read-only view access automatically based on their phone number.
 
 ### Provider hierarchy
 
@@ -34,69 +36,64 @@ No automated tests exist in this project.
 ThemeProvider → AuthProvider → AppProvider → Routes
 ```
 
-- **AuthContext** (`src/context/AuthContext.jsx`) — wraps Firebase `onAuthStateChanged`; exposes `user` (Firebase auth object), `userProfile` (Firestore `/users/{uid}` doc), and `refreshProfile()`. Profile is fetched once on auth state change and re-fetched manually via `refreshProfile()` after mutations.
-- **AppContext** (`src/context/AppContext.jsx`) — global UI state via `useReducer`: toast queue, `selectedBuyerId`, `selectedMonth`, `selectedCattle`. Exposes `toast(message, type)` helper (auto-dismisses at 3.5s).
+- **AuthContext** (`src/context/AuthContext.jsx`) — wraps Firebase `onAuthStateChanged`; exposes `user`, `userProfile`, and `refreshProfile()`. Automatically runs `linkPendingMilkbooks()` on login to link any books pre-created with the user's phone.
+- **AppContext** (`src/context/AppContext.jsx`) — global UI state via `useReducer`: toast queue, etc. Exposes `toast(message, type)` helper.
 - **ThemeContext** — light/dark toggle persisted to `localStorage`.
 
 ### Routing & auth guards
 
-`src/routes/PrivateRoute.jsx` checks in order: loading spinner → no user → no role → no name (onboarding) → wrong role. `PublicRoute.jsx` redirects authenticated users to their dashboard. User flow after signup: `/login` → `/role-select` → `/onboarding` → `/seller` or `/buyer`.
+`src/routes/PrivateRoute.jsx` checks in order: loading spinner → no user → no role → no name (onboarding). Routes authenticated users to their respective dashboards.
+- Seller: `/seller`
+- Buyer: `/buyer`
+- Unified detail route: `/milkbooks/:milkbookId` (uses relation role-less creator/viewer permissions)
+- Unified creation route: `/milkbooks/add`
 
 ### Firestore data model
 
-All seller data is scoped under the seller's `uid`. Record IDs are deterministic (`{buyerId}_{cattleType}_{YYYYMMDD}`), enabling idempotent `setDoc(..., { merge: true })` writes.
+All milk records and transaction histories are unified under the top-level `milkbooks` collection and its subcollections.
 
 | Collection | Purpose |
 |---|---|
-| `users/{uid}` | Shared profile (role, name, phone) |
-| `sellers/{sellerId}` | Seller config (autoMode, homeDelivery, cattle types) |
-| `sellerBuyers/{sellerId}/members/{buyerId}` | Buyer membership + auto-quantities per cattle |
-| `sellerPrices/{sellerId}/prices/{priceId}` | Price history; global prices use IDs like `global_cow`, `global_buffalo` |
-| `records/{sellerId}/entries/{recordId}` | Daily milk records written by seller |
-| `buyerSelfRecords/{buyerId}/entries/{recordId}` | Buyer's own parallel records |
-| `payments/{sellerId}/transactions/{paymentId}` | Payment ledger |
-| `buyers/{buyerId}` | Buyer's own profile doc |
-| `linkRequests/{requestId}` | Pending seller↔buyer link requests |
+| `users/{uid}` | Shared profile (role, name, phone, language) |
+| `sellers/{sellerId}` | Seller discovery config (openToSell, GPS location, cattle types) |
+| `milkbooks/{bookId}` | Unified shared ledger metadata (creatorId, partnerId, phone, default quantities, prices) |
+| `milkbooks/{bookId}/records/{recordId}` | Daily morning/evening milk entries. IDs are deterministic (`{cattleType}_{YYYYMMDD}`) |
+| `milkbooks/{bookId}/payments/{paymentId}` | Payment ledger added by the book's creator |
+| `linkRequests/{requestId}` | Legacy/Alternative seller↔buyer linking requests |
 
 ### Service layer
 
 All Firestore operations live in `src/services/`. Components never call Firestore directly.
 
-- `record.service.js` — daily milk record CRUD; `saveRecord` is idempotent via deterministic record IDs
-- `seller.service.js` — seller profile, buyer members, prices
-- `buyer.service.js` — buyer profile, nearby sellers
-- `billing.service.js` — monthly bill computation
-- `location.service.js` — geolocation for nearby-sellers feature
-- `autoRecord.service.js` — client-side auto-record trigger (mirrors Cloud Function logic)
-
-Custom hooks in `src/hooks/` wrap service calls with local state (`useSeller`, `useBuyer`, `useRecords`, etc.).
+- `milkbook.service.js` — unified MilkBook lifecycle, daily records, payment transaction CRUD, auto-linking logic, and backfill helpers.
+- `seller.service.js` — seller profile and config management
+- `buyer.service.js` — buyer profile management
+- `billing.service.js` — bill summary calculation utilities
+- `location.service.js` — geolocation queries for map discovery
 
 ### Auto-record system
 
-Two paths for automatic record creation:
-1. **Cloud Functions** (`functions/index.js`): `autoCreateRecordsMorning` (08:00 IST = 02:30 UTC) and `autoCreateRecordsEvening` (20:00 IST = 14:30 UTC) — scheduled for sellers with `autoMode=true`.
-2. **Client-side** (`useAutoRecord` hook): runs once per seller session via `runAutoRecordsForSeller()` to catch records the Cloud Function may have missed.
-
-Records are flagged `isAbnormal: true` when actual quantity deviates >0.5L from set quantity (`src/utils/milkUtils.js` → `isAbnormal()`).
+Client-side auto-recording runs via the dashboard hooks for active milkbooks created by the current user where `autoMode=true`.
 
 ### Utilities
 
-- `src/utils/milkUtils.js` — `calcTotal`, `calcAmount`, `formatLitres`, `formatAmount`, `isAbnormal`
+- `src/utils/milkUtils.js` — `calcTotal`, `calcAmount`, `formatLitres`, `formatAmount`, `isAbnormal`, `groupRecordsByDate`
 - `src/utils/validators.js` — `validatePhone`, `validateOtp`, `validateName`, `validateQuantity`, `validatePrice`
-- `src/utils/constants.js` — `ROLES`, `CATTLE_TYPES`, `CATTLE_OPTIONS` (cow/buffalo/goat/camel with Hindi labels), `SESSIONS`, `RECORD_SOURCE`, `LINK_STATUS`, `MEMBER_STATUS`
+- `src/utils/constants.js` — `ROLES`, `CATTLE_TYPES`, `CATTLE_OPTIONS`
 - `src/utils/dateUtils.js`, `src/utils/shareUtils.js`
 
 ### i18n
 
-English and Hindi translations in `src/i18n/en.json` and `hi.json`. Language stored in `localStorage` under key `milkbook_lang`. Use `useTranslation()` from `react-i18next` in all components. When adding new UI strings, add keys to both files.
+English and Hindi translations in `src/i18n/en.json` and `hi.json`. Language stored in `localStorage` under key `milkbook_lang`.
 
 ### Styling & UI
 
-Tailwind CSS v4 (via `@tailwindcss/vite` plugin). Primary color is `#1D9E75`. UI primitives (`Button`, `Input`, `Spinner`, etc.) live in `src/components/ui/`. Use `clsx` + `tailwind-merge` for conditional class merging. `@` resolves to `src/` throughout (configured in `vite.config.js`).
+Tailwind CSS v4 (via `@tailwindcss/vite` plugin). Primary color is `#1D9E75`. UI primitives live in `src/components/ui/`.
 
 ### Firestore security rules
 
 Rules are in `firestore.rules`. Key patterns:
-- Seller owns their subcollections (`records`, `sellerBuyers`, `sellerPrices`, `payments`)
-- Buyers can read their own entries via `resource.data.buyerId == request.auth.uid`
-- `users` and `sellers` collections are readable by any authenticated user (needed for nearby-seller discovery)
+- Any authenticated user can read `users` and `sellers` (required for map discovery and phone matching).
+- `milkbooks` and their subcollections (`records`, `payments`) are readable by both the `creatorId` and the `partnerId`.
+- Write/update access to a milkbook and its subcollections is restricted to the `creatorId`.
+- Exception: A user with a matching phone number can update *only* the `partnerId` field of a milkbook to self-link upon registering.

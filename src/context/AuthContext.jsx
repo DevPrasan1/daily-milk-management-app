@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { auth, db } from '@/config/firebase'
+import { linkPendingMilkbooks } from '@/services/milkbook.service'
 
 const AuthContext = createContext(null)
 
@@ -18,6 +19,9 @@ export function AuthProvider({ children }) {
           const snap = await getDoc(doc(db, 'users', firebaseUser.uid))
           if (snap.exists()) {
             setUserProfile(snap.data())
+            linkPendingMilkbooks(firebaseUser.uid, firebaseUser.phoneNumber).catch(e => {
+              console.error('Failed to link pending books on auth state change:', e)
+            })
           }
         } catch {
           // profile not yet created

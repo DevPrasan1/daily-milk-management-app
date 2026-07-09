@@ -1,8 +1,8 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/context/AuthContext'
-import { useBuyerList } from '@/hooks/useSeller'
-import { useAutoRecord } from '@/hooks/useAutoRecord'
+import { getMilkBooks } from '@/services/milkbook.service'
 import AppShell from '@/components/layout/AppShell'
 import TopBar from '@/components/layout/TopBar'
 import PageWrapper from '@/components/layout/PageWrapper'
@@ -10,27 +10,41 @@ import BuyerCard from '@/components/seller/BuyerCard'
 import Card from '@/components/ui/Card'
 import Avatar from '@/components/ui/Avatar'
 import Button from '@/components/ui/Button'
-import { Users, Milk, IndianRupee, ClipboardList, Plus } from 'lucide-react'
+import { Users, Milk, IndianRupee, ClipboardList, Plus, BookOpen } from 'lucide-react'
 
 export default function SellerDashboard() {
   const { t } = useTranslation()
-  const { userProfile } = useAuth()
+  const { user, userProfile } = useAuth()
   const navigate = useNavigate()
-  const { buyers, loading } = useBuyerList()
-  useAutoRecord()
+  
+  const [books, setBooks] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const activeBuyers = buyers.filter(b => b.status === 'active')
+  useEffect(() => {
+    if (user) {
+      getMilkBooks(user.uid)
+        .then(setBooks)
+        .catch(console.error)
+        .finally(() => setLoading(false))
+    }
+  }, [user])
+
+  const myBooks = books.filter(b => b.isCreator)
+  const sharedBooks = books.filter(b => !b.isCreator)
+
+  const activeBuyers = myBooks.filter(b => b.status === 'active')
   const totalDailyLitres = activeBuyers.reduce((sum, b) => {
     const cow = (b.morning?.cow ?? 0) + (b.evening?.cow ?? 0)
     const buf = (b.morning?.buffalo ?? 0) + (b.evening?.buffalo ?? 0)
-    return sum + cow + buf
+    const goat = (b.morning?.goat ?? 0) + (b.evening?.goat ?? 0)
+    const camel = (b.morning?.camel ?? 0) + (b.evening?.camel ?? 0)
+    return sum + cow + buf + goat + camel
   }, 0)
 
   const stats = [
     { icon: Users, label: t('seller.dashboard.totalBuyers'), value: String(activeBuyers.length) },
     { icon: Milk, label: t('seller.dashboard.todayDelivery'), value: `${totalDailyLitres.toFixed(1)}L` },
-    { icon: IndianRupee, label: t('seller.dashboard.pendingPayments'), value: '—' },
-    { icon: ClipboardList, label: t('seller.dashboard.todayEntry'), value: `0/${activeBuyers.length}` },
+    { icon: ClipboardList, label: 'Shared Books', value: String(sharedBooks.length) },
   ]
 
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
@@ -50,50 +64,54 @@ export default function SellerDashboard() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-3 gap-3 mb-5">
           {stats.map(({ icon: Icon, label, value }) => (
             <Card key={label} className="flex flex-col gap-2">
               <div className="w-8 h-8 rounded-xl bg-[#1D9E75]/10 flex items-center justify-center">
                 <Icon className="w-4 h-4 text-[#1D9E75]" />
               </div>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white truncate">{value}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400">{label}</p>
             </Card>
           ))}
         </div>
 
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {t('seller.buyers.title')}
+            My MilkBooks (I Manage)
           </p>
-          <Button size="sm" variant="ghost" onClick={() => navigate('/seller/buyers')}>
-            {t('seller.dashboard.viewAll')}
+          <Button size="sm" onClick={() => navigate('/milkbooks/add')}>
+            <Plus className="w-4 h-4" />
+            Start Book
           </Button>
         </div>
 
-        {loading ? null : buyers.length === 0 ? (
-          <Card className="flex flex-col items-center py-8 text-center">
+        {loading ? null : myBooks.length === 0 ? (
+          <Card className="flex flex-col items-center py-8 text-center mb-6">
             <Users className="w-8 h-8 text-gray-300 mb-2" />
-            <p className="text-sm text-gray-400">{t('seller.buyers.emptyTitle')}</p>
-            <Button size="sm" className="mt-3" onClick={() => navigate('/seller/buyers/add')}>
-              <Plus className="w-4 h-4" />
-              {t('seller.buyers.addBuyer')}
-            </Button>
+            <p className="text-sm text-gray-400">No managed books yet</p>
           </Card>
         ) : (
-          <div className="flex flex-col gap-2">
-            {buyers.slice(0, 3).map(b => (
+          <div className="flex flex-col gap-2 mb-6">
+            {myBooks.map(b => (
               <BuyerCard key={b.id} buyer={b} />
             ))}
-            {buyers.length > 3 && (
-              <button
-                onClick={() => navigate('/seller/buyers')}
-                className="text-sm text-[#1D9E75] text-center py-2 font-medium"
-              >
-                +{buyers.length - 3} more buyers
-              </button>
-            )}
           </div>
+        )}
+
+        {sharedBooks.length > 0 && (
+          <>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                Shared Books (View Only)
+              </p>
+            </div>
+            <div className="flex flex-col gap-2">
+              {sharedBooks.map(b => (
+                <BuyerCard key={b.id} buyer={b} />
+              ))}
+            </div>
+          </>
         )}
       </PageWrapper>
     </AppShell>

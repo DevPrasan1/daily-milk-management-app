@@ -71,5 +71,43 @@ service cloud.firestore {
         resource.data.buyerId == request.auth.uid
       );
     }
+
+    // Milkbooks: creator has full access, partner has read access, partner can link via phone
+    match /milkbooks/{milkbookId} {
+      allow read: if isAuth() && (
+        resource.data.creatorId == request.auth.uid ||
+        resource.data.partnerId == request.auth.uid ||
+        (resource.data.phone != null && (
+          request.auth.token.phone_number == resource.data.phone ||
+          request.auth.token.phone_number == "+91" + resource.data.phone
+        ))
+      );
+      allow create: if isAuth() && request.resource.data.creatorId == request.auth.uid;
+      allow update: if isAuth() && (
+        resource.data.creatorId == request.auth.uid ||
+        (resource.data.phone != null &&
+         (request.auth.token.phone_number == resource.data.phone ||
+          request.auth.token.phone_number == "+91" + resource.data.phone) &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partnerId']) &&
+         request.resource.data.partnerId == request.auth.uid)
+      );
+      allow delete: if isAuth() && resource.data.creatorId == request.auth.uid;
+
+      match /records/{recordId} {
+        allow read: if isAuth() && (
+          get(/databases/$(database)/documents/milkbooks/$(milkbookId)).data.creatorId == request.auth.uid ||
+          get(/databases/$(database)/documents/milkbooks/$(milkbookId)).data.partnerId == request.auth.uid
+        );
+        allow write: if isAuth() && get(/databases/$(database)/documents/milkbooks/$(milkbookId)).data.creatorId == request.auth.uid;
+      }
+
+      match /payments/{paymentId} {
+        allow read: if isAuth() && (
+          get(/databases/$(database)/documents/milkbooks/$(milkbookId)).data.creatorId == request.auth.uid ||
+          get(/databases/$(database)/documents/milkbooks/$(milkbookId)).data.partnerId == request.auth.uid
+        );
+        allow write: if isAuth() && get(/databases/$(database)/documents/milkbooks/$(milkbookId)).data.creatorId == request.auth.uid;
+      }
+    }
   }
 }

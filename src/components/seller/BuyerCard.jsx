@@ -12,15 +12,15 @@ export default function BuyerCard({ buyer, sellerId }) {
   return (
     <Card
       padding={false}
-      onClick={() => navigate(`/seller/buyers/${buyer.id}`)}
+      onClick={() => navigate(`/milkbooks/${buyer.id}`)}
       className="overflow-hidden"
     >
       <div className="flex items-center gap-3 px-4 py-3">
-        <Avatar name={buyer.name} size="md" />
+        <Avatar name={buyer.displayName || buyer.name} size="md" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-              {buyer.name}
+              {buyer.displayName || buyer.name}
             </p>
             <Badge variant={buyer.status === 'active' ? 'green' : 'gray'}>
               {buyer.status === 'active' ? 'Active' : 'Inactive'}
