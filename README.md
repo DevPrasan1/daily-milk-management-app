@@ -11,15 +11,14 @@ A modern, responsive Progressive Web Application (PWA) designed for dairy seller
 
 <table>
   <tr>
-    <td width="33%" align="center">
+    <td width="67%" align="center" colspan="2">
       <b>Home Dashboard (Buyer)</b><br/>
       <img src="public/screenshots/home_1.jpeg" width="100%" alt="Home Buyer" />
-    </td>
-    <td width="33%" align="center">
-      <b>Shared Ledgers List</b><br/>
+      <hr/>
+       <b>Shared Ledgers List</b><br/>
       <img src="public/screenshots/home_2.jpeg" width="100%" alt="Home Books" />
     </td>
-     <td width="33%" align="center">
+      <td width="33%" align="center">
       <b>Login Screen</b><br/>
       <img src="public/screenshots/login_1.jpeg" width="100%" alt="Login" />
     </td>
