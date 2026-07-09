@@ -25,7 +25,7 @@ import PaymentHistory from '@/components/billing/PaymentHistory'
 import RecordEntryModal from '@/components/records/RecordEntryModal'
 import Button from '@/components/ui/Button'
 import Spinner from '@/components/ui/Spinner'
-import { IndianRupee, Pencil, Share2, Trash2, Milk } from 'lucide-react'
+import { IndianRupee, Pencil, Trash2, Milk, Download } from 'lucide-react'
 import { clsx } from 'clsx'
 import { groupRecordsByDate, formatLitres, formatAmount } from '@/utils/milkUtils'
 
@@ -107,6 +107,303 @@ export default function MilkBookDetail() {
   const cattleRecords = groupRecordsByDate(records)
   const activeCattleTypes = Array.from(new Set(records.map(r => r.cattleType))).filter(Boolean)
 
+  function handleDownloadPDF() {
+    if (!book) return
+
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) {
+      toast('Please allow popups to download PDF', 'error')
+      return
+    }
+
+    const sortedRecords = [...records].sort((a, b) => {
+      const da = a.date?.toDate ? a.date.toDate() : new Date(a.date)
+      const db = b.date?.toDate ? b.date.toDate() : new Date(b.date)
+      return da - db
+    })
+
+    const monthName = selectedMonth.label
+    
+    const recordRows = sortedRecords.map(r => {
+      const rDate = r.date?.toDate ? r.date.toDate() : new Date(r.date)
+      return `
+        <tr>
+          <td>${rDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
+          <td style="text-transform: capitalize;">${r.cattleType}</td>
+          <td>${r.morning ? r.morning.toFixed(1) + ' L' : '—'}</td>
+          <td>${r.evening ? r.evening.toFixed(1) + ' L' : '—'}</td>
+          <td>${r.comment || '—'}</td>
+        </tr>
+      `
+    }).join('')
+
+    const breakdownRows = activeCattleTypes.map(type => {
+      const litres = records.filter(r => r.cattleType === type).reduce((sum, r) => sum + (r.total || 0), 0)
+      const priceVal = getCattlePrice(type)
+      const subtotal = litres * priceVal
+      const emoji = EMOJIS[type] || '🥛'
+      return `
+        <div class="meta-row">
+          <span class="meta-label">${emoji} <span style="text-transform: capitalize;">${type}</span> (${litres.toFixed(1)} L):</span>
+          <span class="meta-value">₹${priceVal}/L = ₹${subtotal.toFixed(2)}</span>
+        </div>
+      `
+    }).join('')
+
+    const paymentRows = payments.map(p => {
+      const pDate = p.date?.toDate ? p.date.toDate() : new Date(p.date)
+      return `
+        <tr>
+          <td>${pDate.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
+          <td><strong>₹${(p.amount || 0).toFixed(2)}</strong></td>
+          <td>${p.note || '—'}</td>
+        </tr>
+      `
+    }).join('')
+
+    const htmlContent = `
+      <html>
+        <head>
+          <title>MilkBook Report - ${book.displayName || book.name} - ${monthName}</title>
+          <style>
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+              color: #333;
+              margin: 0;
+              padding: 40px;
+              font-size: 14px;
+              line-height: 1.5;
+            }
+            header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 2px solid #1D9E75;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .title h1 {
+              margin: 0;
+              color: #1D9E75;
+              font-size: 26px;
+              font-weight: 700;
+            }
+            .title p {
+              margin: 5px 0 0 0;
+              color: #666;
+              font-size: 14px;
+            }
+            .metadata {
+              display: grid;
+              grid-template-cols: 1fr 1fr 1fr;
+              gap: 20px;
+              margin-bottom: 30px;
+            }
+            .meta-box {
+              background: #f8f9fa;
+              border-radius: 12px;
+              padding: 20px;
+              border: 1px solid #e9ecef;
+            }
+            .meta-box h3 {
+              margin: 0 0 10px 0;
+              font-size: 15px;
+              color: #495057;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              border-bottom: 1px solid #dee2e6;
+              padding-bottom: 8px;
+            }
+            .meta-row {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 8px;
+            }
+            .meta-row:last-child {
+              margin-bottom: 0;
+            }
+            .meta-label {
+              color: #6c757d;
+            }
+            .meta-value {
+              font-weight: 600;
+            }
+            .summary-card {
+              background: #e8f5e9;
+              border: 1px solid #c8e6c9;
+              color: #2e7d32;
+            }
+            .summary-card h3 {
+              color: #2e7d32;
+              border-color: #c8e6c9;
+            }
+            .summary-card .meta-label {
+              color: #4caf50;
+            }
+            .summary-card .meta-value {
+              color: #1b5e20;
+            }
+            .summary-card .remaining-alert {
+              color: #c62828;
+              font-size: 16px;
+              font-weight: 700;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 30px;
+            }
+            th {
+              background-color: #f1f3f5;
+              color: #495057;
+              text-align: left;
+              padding: 10px 12px;
+              font-weight: 600;
+              border-bottom: 2px solid #dee2e6;
+            }
+            td {
+              padding: 10px 12px;
+              border-bottom: 1px solid #dee2e6;
+              color: #495057;
+            }
+            tr:nth-child(even) td {
+              background-color: #f8f9fa;
+            }
+            .section-title {
+              font-size: 18px;
+              font-weight: 700;
+              color: #343a40;
+              margin: 40px 0 15px 0;
+              border-bottom: 1px solid #dee2e6;
+              padding-bottom: 8px;
+            }
+            .footer {
+              margin-top: 60px;
+              text-align: center;
+              color: #999;
+              font-size: 12px;
+              border-top: 1px solid #eee;
+              padding-top: 20px;
+            }
+            @media print {
+              body {
+                padding: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <header>
+            <div class="title">
+              <h1>MilkBook Monthly Report</h1>
+              <p>Apna dudh, apna hisaab</p>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 18px; font-weight: 700; color: #1D9E75;">${monthName}</div>
+              <div style="color: #666; font-size: 12px;">Report Generated: ${new Date().toLocaleDateString('en-IN')}</div>
+            </div>
+          </header>
+
+          <div class="metadata">
+            <div class="meta-box">
+              <h3>Book Details</h3>
+              <div class="meta-row">
+                <span class="meta-label">MilkBook Name:</span>
+                <span class="meta-value">${book.displayName || book.name}</span>
+              </div>
+              ${book.phone ? `
+              <div class="meta-row">
+                <span class="meta-label">Phone Number:</span>
+                <span class="meta-value">+91 ${book.phone}</span>
+              </div>
+              ` : ''}
+              <div class="meta-row">
+                <span class="meta-label">Role:</span>
+                <span class="meta-value">${book.isCreator ? 'Managed Book (Creator)' : 'Shared Book (Viewer)'}</span>
+              </div>
+            </div>
+
+            <div class="meta-box">
+              <h3>Deliveries Breakdown</h3>
+              ${breakdownRows || '<p style="color: #999; margin: 0; font-size: 13px;">No entries logged yet.</p>'}
+            </div>
+
+            <div class="meta-box summary-card">
+              <h3>Billing Summary</h3>
+              <div class="meta-row">
+                <span class="meta-label">Total Volume:</span>
+                <span class="meta-value">${summary.totalLitres.toFixed(1)} Litres</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Total Amount:</span>
+                <span class="meta-value">₹${summary.totalAmount.toFixed(2)}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Total Paid:</span>
+                <span class="meta-value">₹${summary.totalPaid.toFixed(2)}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Balance Due:</span>
+                <span class="meta-value ${summary.remaining > 0 ? 'remaining-alert' : ''}">₹${summary.remaining.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">Daily Milk Entries</div>
+          ${sortedRecords.length === 0 ? `
+            <p style="color: #999; font-style: italic;">No records logged for this month.</p>
+          ` : `
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Cattle</th>
+                  <th>Morning</th>
+                  <th>Evening</th>
+                  <th>Comment</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${recordRows}
+              </tbody>
+            </table>
+          `}
+
+          <div class="section-title">Payments Log</div>
+          ${payments.length === 0 ? `
+            <p style="color: #999; font-style: italic;">No payments recorded for this month.</p>
+          ` : `
+            <table style="max-width: 600px;">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Amount Paid</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${paymentRows}
+              </tbody>
+            </table>
+          `}
+
+          <div class="footer">
+            Thank you for using MilkBook • Apna dudh, apna hisaab
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `
+
+    printWindow.document.write(htmlContent)
+    printWindow.document.close()
+  }
+
   function handleShare() {
     if (!book) return
     const msg = buildWhatsAppBillMessage(book.name, selectedMonth.date, summary, records, getCattlePrice)
@@ -158,11 +455,11 @@ export default function MilkBookDetail() {
         action={
           <div className="flex gap-1">
             <button
-              onClick={handleShare}
+              onClick={handleDownloadPDF}
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              title="Share bill on WhatsApp"
+              title="Download PDF"
             >
-              <Share2 className="w-4 h-4 text-[#1D9E75]" />
+              <Download className="w-4 h-4 text-[#1D9E75]" />
             </button>
             {isCreator && (
               <>
