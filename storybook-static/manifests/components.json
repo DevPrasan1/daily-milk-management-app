@@ -1,0 +1,599 @@
+{
+  "v": 0,
+  "components": {
+    "ui-avatar": {
+      "id": "ui-avatar",
+      "name": "Avatar",
+      "path": "./src/components/ui/Avatar.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Avatar",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Avatar.jsx",
+        "actualName": "Avatar",
+        "exportName": "default",
+        "props": {
+          "size": {
+            "defaultValue": {
+              "value": "'md'",
+              "computed": false
+            },
+            "required": false
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "ui-avatar--default",
+          "name": "Default",
+          "snippet": "const Default = () => <Avatar name=\"John Doe\" size=\"md\" />;"
+        },
+        {
+          "id": "ui-avatar--with-photo",
+          "name": "With Photo",
+          "snippet": "const WithPhoto = () => <Avatar\n    name=\"Jane Doe\"\n    photo=\"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150\"\n    size=\"lg\" />;"
+        },
+        {
+          "id": "ui-avatar--small",
+          "name": "Small",
+          "snippet": "const Small = () => <Avatar name=\"Jane Doe\" size=\"sm\" />;"
+        },
+        {
+          "id": "ui-avatar--extra-large",
+          "name": "Extra Large",
+          "snippet": "const ExtraLarge = () => <Avatar name=\"Jane Doe\" size=\"xl\" />;"
+        },
+        {
+          "id": "ui-avatar--missing-name",
+          "name": "Missing Name",
+          "snippet": "const MissingName = () => <Avatar size=\"md\" />;"
+        }
+      ],
+      "import": "import { Avatar } from \"doodh-app\";"
+    },
+    "ui-badge": {
+      "id": "ui-badge",
+      "name": "Badge",
+      "path": "./src/components/ui/Badge.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Badge",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Badge.jsx",
+        "actualName": "Badge",
+        "exportName": "default",
+        "props": {
+          "variant": {
+            "defaultValue": {
+              "value": "'gray'",
+              "computed": false
+            },
+            "required": false
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "ui-badge--gray",
+          "name": "Gray",
+          "snippet": "const Gray = () => <Badge variant=\"gray\">Pending</Badge>;"
+        },
+        {
+          "id": "ui-badge--green",
+          "name": "Green",
+          "snippet": "const Green = () => <Badge variant=\"green\">Active</Badge>;"
+        },
+        {
+          "id": "ui-badge--amber",
+          "name": "Amber",
+          "snippet": "const Amber = () => <Badge variant=\"amber\">Warning</Badge>;"
+        },
+        {
+          "id": "ui-badge--red",
+          "name": "Red",
+          "snippet": "const Red = () => <Badge variant=\"red\">Inactive</Badge>;"
+        },
+        {
+          "id": "ui-badge--teal",
+          "name": "Teal",
+          "snippet": "const Teal = () => <Badge variant=\"teal\">New Partner</Badge>;"
+        }
+      ],
+      "import": "import { Badge } from \"doodh-app\";"
+    },
+    "ui-button": {
+      "id": "ui-button",
+      "name": "Button",
+      "path": "./src/components/ui/Button.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Button",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Button.jsx",
+        "actualName": "Button",
+        "exportName": "default",
+        "props": {
+          "variant": {
+            "defaultValue": {
+              "value": "'primary'",
+              "computed": false
+            },
+            "required": false
+          },
+          "size": {
+            "defaultValue": {
+              "value": "'md'",
+              "computed": false
+            },
+            "required": false
+          },
+          "type": {
+            "defaultValue": {
+              "value": "'button'",
+              "computed": false
+            },
+            "required": false
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "ui-button--primary",
+          "name": "Primary",
+          "snippet": "const Primary = () => <Button onClick={fn()} variant=\"primary\">Primary Button</Button>;"
+        },
+        {
+          "id": "ui-button--secondary",
+          "name": "Secondary",
+          "snippet": "const Secondary = () => <Button onClick={fn()} variant=\"secondary\">Secondary Button</Button>;"
+        },
+        {
+          "id": "ui-button--outline",
+          "name": "Outline",
+          "snippet": "const Outline = () => <Button onClick={fn()} variant=\"outline\">Outline Button</Button>;"
+        },
+        {
+          "id": "ui-button--ghost",
+          "name": "Ghost",
+          "snippet": "const Ghost = () => <Button onClick={fn()} variant=\"ghost\">Ghost Button</Button>;"
+        },
+        {
+          "id": "ui-button--danger",
+          "name": "Danger",
+          "snippet": "const Danger = () => <Button onClick={fn()} variant=\"danger\">Danger Button</Button>;"
+        },
+        {
+          "id": "ui-button--loading",
+          "name": "Loading",
+          "snippet": "const Loading = () => <Button onClick={fn()} variant=\"primary\" loading>Loading...</Button>;"
+        },
+        {
+          "id": "ui-button--disabled",
+          "name": "Disabled",
+          "snippet": "const Disabled = () => <Button onClick={fn()} variant=\"primary\" disabled>Disabled Button</Button>;"
+        },
+        {
+          "id": "ui-button--small",
+          "name": "Small",
+          "snippet": "const Small = () => <Button onClick={fn()} size=\"sm\">Small Button</Button>;"
+        },
+        {
+          "id": "ui-button--large",
+          "name": "Large",
+          "snippet": "const Large = () => <Button onClick={fn()} size=\"lg\">Large Button</Button>;"
+        },
+        {
+          "id": "ui-button--full-width",
+          "name": "Full Width",
+          "snippet": "const FullWidth = () => <Button onClick={fn()} size=\"full\">Full Width Button</Button>;"
+        }
+      ],
+      "import": "import { Button } from \"doodh-app\";"
+    },
+    "ui-card": {
+      "id": "ui-card",
+      "name": "Card",
+      "path": "./src/components/ui/Card.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Card",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Card.jsx",
+        "actualName": "Card",
+        "exportName": "default",
+        "props": {
+          "padding": {
+            "defaultValue": {
+              "value": "true",
+              "computed": false
+            },
+            "required": false
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "ui-card--default",
+          "name": "Default",
+          "snippet": "const Default = () => <Card onClick={fn()} padding>(<div>\n      <h4 className=\"text-lg font-bold text-gray-900 dark:text-gray-100\">Card Title</h4>\n      <p className=\"text-sm text-gray-500 dark:text-gray-400 mt-1\">This is a standard card component with padding enabled.</p>\n    </div>)</Card>;"
+        },
+        {
+          "id": "ui-card--interactive",
+          "name": "Interactive",
+          "snippet": "const Interactive = () => <Card onClick={fn()} padding>(<div>\n      <h4 className=\"text-lg font-bold text-[#1D9E75]\">Interactive Card</h4>\n      <p className=\"text-sm text-gray-500 dark:text-gray-400 mt-1\">Clicking this card trigger a scale animation and fires the onClick action.</p>\n    </div>)</Card>;"
+        },
+        {
+          "id": "ui-card--no-padding",
+          "name": "No Padding",
+          "snippet": "const NoPadding = () => <Card onClick={fn()} padding={false}>(<div className=\"bg-gray-100 dark:bg-gray-700 p-8 rounded-2xl text-center\">\n      <p className=\"text-sm text-gray-700 dark:text-gray-300\">Custom inner content padding.</p>\n    </div>)</Card>;"
+        }
+      ],
+      "import": "import { Card } from \"doodh-app\";"
+    },
+    "ui-emptystate": {
+      "id": "ui-emptystate",
+      "name": "EmptyState",
+      "path": "./src/components/ui/EmptyState.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "EmptyState",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/EmptyState.jsx",
+        "actualName": "EmptyState",
+        "exportName": "default"
+      },
+      "stories": [
+        {
+          "id": "ui-emptystate--default",
+          "name": "Default",
+          "snippet": "const Default = () => <EmptyState\n    action={fn()}\n    icon=\"Inbox\"\n    title=\"No items found\"\n    description=\"There are no active records in this list. Try creating a new one.\" />;"
+        },
+        {
+          "id": "ui-emptystate--with-action",
+          "name": "With Action",
+          "snippet": "const WithAction = () => <EmptyState\n    action={fn()}\n    icon=\"Inbox\"\n    title=\"No Buyers Added Yet\"\n    description=\"Get started by adding your first buyer to record milk deliveries.\"\n    actionLabel=\"Add Buyer\" />;"
+        },
+        {
+          "id": "ui-emptystate--error-state",
+          "name": "Error State",
+          "snippet": "const ErrorState = () => <EmptyState\n    action={fn()}\n    icon=\"ShieldAlert\"\n    title=\"Connection Lost\"\n    description=\"We encountered an error loading your data. Please check your internet connection.\"\n    actionLabel=\"Retry Connection\" />;"
+        },
+        {
+          "id": "ui-emptystate--milestone",
+          "name": "Milestone",
+          "snippet": "const Milestone = () => <EmptyState\n    action={fn()}\n    icon=\"Award\"\n    title=\"All Caught Up!\"\n    description=\"You have cleared all pending milk delivery schedules for today.\" />;"
+        }
+      ],
+      "import": "import { EmptyState } from \"doodh-app\";"
+    },
+    "ui-input": {
+      "id": "ui-input",
+      "name": "Input",
+      "path": "./src/components/ui/Input.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Input",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Input.jsx",
+        "actualName": "Input",
+        "exportName": "default"
+      },
+      "stories": [
+        {
+          "id": "ui-input--default",
+          "name": "Default",
+          "snippet": "const Default = () => <Input\n    onChange={fn()}\n    label=\"Full Name\"\n    placeholder=\"Enter your name...\"\n    type=\"text\" />;"
+        },
+        {
+          "id": "ui-input--with-prefix",
+          "name": "With Prefix",
+          "snippet": "const WithPrefix = () => <Input\n    onChange={fn()}\n    label=\"Price per Litre\"\n    placeholder=\"0.00\"\n    type=\"number\"\n    prefix=\"₹\" />;"
+        },
+        {
+          "id": "ui-input--with-suffix",
+          "name": "With Suffix",
+          "snippet": "const WithSuffix = () => <Input\n    onChange={fn()}\n    label=\"Milk Quantity\"\n    placeholder=\"0.0\"\n    type=\"number\"\n    suffix=\"Litres\" />;"
+        },
+        {
+          "id": "ui-input--with-prefix-and-suffix",
+          "name": "With Prefix And Suffix",
+          "snippet": "const WithPrefixAndSuffix = () => <Input\n    onChange={fn()}\n    label=\"Amount Paid\"\n    placeholder=\"0\"\n    type=\"number\"\n    prefix=\"₹\"\n    suffix=\"INR\" />;"
+        },
+        {
+          "id": "ui-input--with-error",
+          "name": "With Error",
+          "snippet": "const WithError = () => <Input\n    onChange={fn()}\n    label=\"Mobile Number\"\n    placeholder=\"Enter 10-digit number\"\n    type=\"tel\"\n    error=\"Please enter a valid 10-digit phone number\" />;"
+        },
+        {
+          "id": "ui-input--with-hint",
+          "name": "With Hint",
+          "snippet": "const WithHint = () => <Input\n    onChange={fn()}\n    label=\"Password\"\n    placeholder=\"Password\"\n    type=\"password\"\n    hint=\"Must be at least 8 characters long.\" />;"
+        },
+        {
+          "id": "ui-input--disabled",
+          "name": "Disabled",
+          "snippet": "const Disabled = () => <Input\n    onChange={fn()}\n    label=\"Email (Cannot change)\"\n    placeholder=\"user@example.com\"\n    type=\"email\"\n    disabled />;"
+        }
+      ],
+      "import": "import { Input } from \"doodh-app\";"
+    },
+    "ui-modal": {
+      "id": "ui-modal",
+      "name": "Modal",
+      "path": "./src/components/ui/Modal.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Modal",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Modal.jsx",
+        "actualName": "Modal",
+        "exportName": "default"
+      },
+      "stories": [
+        {
+          "id": "ui-modal--default",
+          "name": "Default",
+          "snippet": "const Default = () => {\n    const [open, setOpen] = useState(args.open ?? true)\n\n    return (\n        <div className=\"min-h-[300px]\">\n            <Button onClick={() => setOpen(true)}>Open Modal</Button>\n            <Modal\n                title=\"Confirm Delivery\"\n                open={open}\n                onClose={() => { setOpen(false); args.onClose(); }}>\n                <div className=\"space-y-4\">\n                    <p className=\"text-sm text-gray-600 dark:text-gray-400\">This is the content area of the modal. You can place any form elements, text, or buttons here.\n                                  </p>\n                    <div className=\"flex justify-end gap-2\">\n                        <Button variant=\"ghost\" onClick={() => setOpen(false)}>Cancel</Button>\n                        <Button variant=\"primary\" onClick={() => setOpen(false)}>Confirm</Button>\n                    </div>\n                </div>\n            </Modal>\n        </div>\n    );\n};"
+        },
+        {
+          "id": "ui-modal--without-title",
+          "name": "Without Title",
+          "snippet": "const WithoutTitle = () => {\n    const [open, setOpen] = useState(args.open ?? true)\n\n    return (\n        <div className=\"min-h-[300px]\">\n            <Button onClick={() => setOpen(true)}>Open Modal</Button>\n            <Modal open={open} onClose={() => { setOpen(false); args.onClose(); }}>\n                <div className=\"space-y-4\">\n                    <p className=\"text-sm text-gray-600 dark:text-gray-400\">This is the content area of the modal. You can place any form elements, text, or buttons here.\n                                  </p>\n                    <div className=\"flex justify-end gap-2\">\n                        <Button variant=\"ghost\" onClick={() => setOpen(false)}>Cancel</Button>\n                        <Button variant=\"primary\" onClick={() => setOpen(false)}>Confirm</Button>\n                    </div>\n                </div>\n            </Modal>\n        </div>\n    );\n};"
+        }
+      ],
+      "import": "import { Button, Modal } from \"doodh-app\";"
+    },
+    "ui-spinner": {
+      "id": "ui-spinner",
+      "name": "Spinner",
+      "path": "./src/components/ui/Spinner.stories.jsx",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Spinner",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/components/ui/Spinner.jsx",
+        "actualName": "Spinner",
+        "exportName": "Spinner",
+        "props": {
+          "size": {
+            "defaultValue": {
+              "value": "'md'",
+              "computed": false
+            },
+            "required": false
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "ui-spinner--default",
+          "name": "Default",
+          "snippet": "const Default = () => <Spinner size=\"md\" />;"
+        },
+        {
+          "id": "ui-spinner--small",
+          "name": "Small",
+          "snippet": "const Small = () => <Spinner size=\"sm\" />;"
+        },
+        {
+          "id": "ui-spinner--large",
+          "name": "Large",
+          "snippet": "const Large = () => <Spinner size=\"lg\" />;"
+        },
+        {
+          "id": "ui-spinner--full-page",
+          "name": "Full Page",
+          "snippet": "const FullPage = () => <FullPageSpinner />;"
+        }
+      ],
+      "import": "import { FullPageSpinner, Spinner } from \"doodh-app\";"
+    },
+    "example-button": {
+      "id": "example-button",
+      "name": "Button",
+      "path": "./src/stories/Button.stories.js",
+      "jsDocTags": {},
+      "description": "Primary UI component for user interaction",
+      "reactDocgen": {
+        "description": "Primary UI component for user interaction",
+        "methods": [],
+        "displayName": "Button",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/stories/Button.jsx",
+        "actualName": "Button",
+        "exportName": "Button",
+        "props": {
+          "primary": {
+            "defaultValue": {
+              "value": "false",
+              "computed": false
+            },
+            "description": "Is this the principal call to action on the page?",
+            "type": {
+              "name": "bool"
+            },
+            "required": false
+          },
+          "backgroundColor": {
+            "defaultValue": {
+              "value": "null",
+              "computed": false
+            },
+            "description": "What background color to use",
+            "type": {
+              "name": "string"
+            },
+            "required": false
+          },
+          "size": {
+            "defaultValue": {
+              "value": "'medium'",
+              "computed": false
+            },
+            "description": "How large should the button be?",
+            "type": {
+              "name": "enum",
+              "value": [
+                {
+                  "value": "'small'",
+                  "computed": false
+                },
+                {
+                  "value": "'medium'",
+                  "computed": false
+                },
+                {
+                  "value": "'large'",
+                  "computed": false
+                }
+              ]
+            },
+            "required": false
+          },
+          "label": {
+            "description": "Button contents",
+            "type": {
+              "name": "string"
+            },
+            "required": true
+          },
+          "onClick": {
+            "description": "Optional click handler",
+            "type": {
+              "name": "func"
+            },
+            "required": false
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "example-button--primary",
+          "name": "Primary",
+          "snippet": "const Primary = () => <Button onClick={fn()} primary label=\"Button\" />;"
+        },
+        {
+          "id": "example-button--secondary",
+          "name": "Secondary",
+          "snippet": "const Secondary = () => <Button onClick={fn()} label=\"Button\" />;"
+        },
+        {
+          "id": "example-button--large",
+          "name": "Large",
+          "snippet": "const Large = () => <Button onClick={fn()} size=\"large\" label=\"Button\" />;"
+        },
+        {
+          "id": "example-button--small",
+          "name": "Small",
+          "snippet": "const Small = () => <Button onClick={fn()} size=\"small\" label=\"Button\" />;"
+        }
+      ],
+      "import": "import { Button } from \"doodh-app\";"
+    },
+    "example-header": {
+      "id": "example-header",
+      "name": "Header",
+      "path": "./src/stories/Header.stories.js",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Header",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/stories/Header.jsx",
+        "actualName": "Header",
+        "exportName": "Header",
+        "props": {
+          "user": {
+            "defaultValue": {
+              "value": "null",
+              "computed": false
+            },
+            "description": "",
+            "type": {
+              "name": "shape",
+              "value": {
+                "name": {
+                  "name": "string",
+                  "required": true
+                }
+              }
+            },
+            "required": false
+          },
+          "onLogin": {
+            "description": "",
+            "type": {
+              "name": "func"
+            },
+            "required": true
+          },
+          "onLogout": {
+            "description": "",
+            "type": {
+              "name": "func"
+            },
+            "required": true
+          },
+          "onCreateAccount": {
+            "description": "",
+            "type": {
+              "name": "func"
+            },
+            "required": true
+          }
+        }
+      },
+      "stories": [
+        {
+          "id": "example-header--logged-in",
+          "name": "Logged In",
+          "snippet": "const LoggedIn = () => <Header\n    onLogin={fn()}\n    onLogout={fn()}\n    onCreateAccount={fn()}\n    user={{\n      name: 'Jane Doe',\n    }} />;"
+        },
+        {
+          "id": "example-header--logged-out",
+          "name": "Logged Out",
+          "snippet": "const LoggedOut = () => <Header onLogin={fn()} onLogout={fn()} onCreateAccount={fn()} />;"
+        }
+      ],
+      "import": "import { Header } from \"doodh-app\";"
+    },
+    "example-page": {
+      "id": "example-page",
+      "name": "Page",
+      "path": "./src/stories/Page.stories.js",
+      "jsDocTags": {},
+      "reactDocgen": {
+        "description": "",
+        "methods": [],
+        "displayName": "Page",
+        "definedInFile": "/Users/devprasan/Documents/doodh-app/src/stories/Page.jsx",
+        "actualName": "Page",
+        "exportName": "Page"
+      },
+      "stories": [
+        {
+          "id": "example-page--logged-out",
+          "name": "Logged Out",
+          "snippet": "const LoggedOut = () => <Page />;"
+        },
+        {
+          "id": "example-page--logged-in",
+          "name": "Logged In",
+          "snippet": "const LoggedIn = () => <Page />;"
+        }
+      ],
+      "import": "import { Page } from \"doodh-app\";"
+    }
+  },
+  "meta": {
+    "docgen": "react-docgen",
+    "durationMs": 132
+  }
+}
