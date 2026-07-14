@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "seed": "node scripts/seed-emulator.js",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest",
+    "test:unit": "vitest run --project=unit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

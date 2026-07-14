@@ -1,4 +1,5 @@
 export function formatDate(date) {
+  if (!date) return ''
   const d = date instanceof Date ? date : date?.toDate?.() ?? new Date(date)
 
   if (Number.isNaN(d.getTime())) return ''
@@ -47,6 +48,7 @@ export function isToday(date) {
 }
 
 export function getLocalDateString(date) {
+  if (!date) return ''
   const d = date instanceof Date ? date : date?.toDate?.() ?? new Date(date)
   if (Number.isNaN(d.getTime())) return ''
   const year = d.getFullYear()
